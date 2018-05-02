@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  div.container
+   div.row
+    div.col-md-6.col-md-offset-3
+      h1 Играем в #{title}
+   div.row
+    div.col-md-2.col-md-offset-5
+      div.list-group(style="display:inline-block")
+        a.list-group-item.btn.btn-default(href="../game?faction=X")
+         p.text-center X
+        a.list-group-item.btn.btn-default(href="../game?faction=0")
+         p.text-center 0
+        a.list-group-item.btn.btn-default(href="../spectator")
+         p.text-center Наблюдатель

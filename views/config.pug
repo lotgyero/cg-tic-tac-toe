@@ -1,0 +1,32 @@
+extends layout
+
+block content
+  div.container
+   div.row
+    div.col-md-8.col-md-offset-4
+      h1 Настраиваем #{title}
+   div.row.text-center
+    div.col-md-3.col-md-offset-5
+      form
+        table
+          tr
+            td
+              label.text-center Количество игроков
+            td
+              input.form-control(type='text' id=users)
+        p Зависимости
+          table.table
+             tr
+               td X1
+               td
+                 input.form-control(type='text')             
+             tr
+               td X2
+               td
+                 input.form-control(type='text')             
+             tr
+               td X3
+               td
+                 input.form-control(type='text')
+
+        button.btn.btn-default Изменить

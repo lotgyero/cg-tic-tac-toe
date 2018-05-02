@@ -1,0 +1,45 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+span.small
+{
+    font-size: 30px;
+}
+
+span.big
+{
+    font-size: 124px;
+}
+
+span.last {
+    color: white;
+    text-align: center;
+}
+
+span.old {
+    color: grey;
+    text-align: center;
+}
+
+span.collision {
+    color: red;
+    text-align: center;
+}
+
+.square {
+    background-color: black;
+    height: 189px;
+    border: 2px solid white;
+}
+.square-small {
+    background-color: black;
+    height: 63px;
+    border: 2px solid white;
+    width: 20%;
+}
