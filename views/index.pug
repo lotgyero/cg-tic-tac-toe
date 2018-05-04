@@ -1,5 +1,15 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+ ul
+   each val, index in model
+     li=index + ':' + val
+ ul
+   each val, index in model.big
+     li=index + ':' + val
+ ul
+   each val, index in model.small
+     li=index + ':' + val
+   
+  
+  

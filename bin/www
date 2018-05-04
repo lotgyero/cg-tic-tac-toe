@@ -5,6 +5,7 @@
  */
 
 var app = require('../app');
+var gameModel = require('../logic');
 var debug = require('debug')('cg-tic-tack-toe:server');
 var http = require('http');
 
@@ -28,6 +29,35 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+/**
+ * socket.io
+ */
+var io = require('socket.io')(server);
+io.on('connection', function (socket) {
+  var turnCounter = gameModel.turn;
+  /*setInterval(function(){
+    if(gameModel.turnCounter != turnCounter)
+    {
+        //socket.emit('ping', gameModel.ping());
+        turnCounter = gameModel.turnCounter;
+    }
+  }, 1000);*/
+
+  socket.on('turn_up', function(data) {
+    gameModel.incTurn(); });
+
+  socket.on('print', function () {
+    socket.emit('printOut', gameModel);
+  });
+
+  socket.on('turn', function(data) {
+      gameModel.turn(data); });
+
+  socket.on('start', function() {
+      gameModel.start();
+   });
+});
 
 /**
  * Normalize a port into a number, string, or false.

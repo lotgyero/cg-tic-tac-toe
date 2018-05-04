@@ -27,11 +27,6 @@ span.old {
     text-align: center;
 }
 
-span.collision {
-    color: red;
-    text-align: center;
-}
-
 .square {
     background-color: black;
     height: 189px;
@@ -42,4 +37,12 @@ span.collision {
     height: 63px;
     border: 2px solid white;
     width: 20%;
+}
+.collision {
+    background-color: red;
+    color: white;
+}
+.collision-old {
+    background-color: #7c2d2a;
+    color: white;
 }
