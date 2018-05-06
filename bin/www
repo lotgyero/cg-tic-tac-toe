@@ -8,6 +8,7 @@ var app = require('../app');
 var gameModel = require('../logic');
 var debug = require('debug')('cg-tic-tack-toe:server');
 var http = require('http');
+var logger = require('../logger');
 
 /**
  * Get port from environment and store in Express.
@@ -52,8 +53,16 @@ io.on('connection', function (socket) {
   });
 
   socket.on('turn', function(data) {
-      gameModel.turn(data); });
+      var msg = gameModel.turn(data);
+      if (typeof msg != 'undefined') {
+          logger.debug('socket turn(): ' + msg);
+          socket.emit('turn ends', msg);
+      }
+  });
 
+  socket.on('reset', function () {
+    gameModel.resetState();
+  });
   socket.on('start', function() {
       gameModel.start();
    });
