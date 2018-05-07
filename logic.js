@@ -233,7 +233,7 @@ var gameModel = {
         }
         this.turnCounter += 1;
         // The game sends its changes to clients using the structure
-        var result = {'small': [], 'big': [], 'won': '', 'changes': []};
+        var result = {'small': [], 'big': [], 'winner': '', 'changes': []};
         result['small'] = this.checkSmall();
         result['big'] = this.checkBig(result);
         result['winner'] = this.checkWinner(result['big']);
@@ -242,21 +242,19 @@ var gameModel = {
         return result;
     },
     // { 'X': [1,2], '0': [3] }
-    checkWinner: function(obj) {
+    checkWinner: function(changes) {
         var winner = [];
         var id;
         var i;
-        var dummyGame;
         var rows;
+        var dummyGame = {'small': this.big};
 
-        for(i = 0; i < obj['X'].length; i++) {
-            if(checkBigRows(this, obj['X'][i], 'X'))
-                winner.push(rows);
-        }
-
-        for(i = 0; i < obj['0'].length; i++) {
-            if(checkBigRows(this, obj['0'][i], '0'))
-                winner.push(rows);
+        for (var symbol of ['X','0']) {
+            for(i = 0; i < changes[symbol].length; i++) {
+                rows = checkRows(dummyGame, changes[symbol][i], symbol);
+                if(rows.length == 3)
+                    winner.push(symbol);
+            }
         }
 
         if (winner.length == 0)
