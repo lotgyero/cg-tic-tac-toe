@@ -46,6 +46,7 @@ io.on('connection', function (socket) {
   }, 1000);*/
 
   socket.on('turn_up', function(data) {
+    console.log('incTurn()');
     gameModel.incTurn(); });
 
   socket.on('print', function () {
@@ -53,12 +54,20 @@ io.on('connection', function (socket) {
   });
 
   socket.on('turn', function(data) {
+      logger.debug(data, 1);
       var msg = gameModel.turn(data);
       if (typeof msg != 'undefined') {
-          logger.debug('socket turn(): ' + msg);
+          logger.debug(msg, 1);
+          //msg['changes']['X'] = [];
           socket.emit('turn ends', msg);
       }
   });
+
+  socket.on('get state', function () {
+      var msg = gameModel.getCurrentState();
+      logger.debug('socket state():', 1);
+      socket.emit('current state', msg);
+    });
 
   socket.on('reset', function () {
     gameModel.resetState();

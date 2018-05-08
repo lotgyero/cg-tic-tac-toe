@@ -314,6 +314,9 @@ var gameModel = {
         }
         return result;
     },
+    getCurrentState: function () {
+        return {'small': this.small, 'big': this.big};
+    },
     ping: function() {
         return {state: this.state, turn: this.turnCounter};
     },

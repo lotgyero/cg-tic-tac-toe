@@ -18,7 +18,8 @@ html
       div.row
         div.col-xs-12.text-center.header
          h1 Играем в #{title}
-         div.container(data-toggle="modal" data-target="#turnModal")
+         //div.container(data-toggle="modal" data-target="#turnModal")
+         div.container(onclick='showTurnField();')
             div.row.text-center
               div.col-md-2
                 p Зависимости
@@ -34,48 +35,44 @@ html
                   td X1
               div.col-md-2.col-md-offset-1.col-xs-4.square
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small
-                     span.small.last.row11 X
-                    div.col-md-4.col-xs-4.square-small
-                     span.small.old.row12 X
-                    div.col-md-4.col-xs-4.square-small
+                    div.col-md-4.col-xs-4.square-small(id='sq1')
+                    div.col-md-4.col-xs-4.square-small(id='sq2')
+                    div.col-md-4.col-xs-4.square-small(id='sq3')
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
+                    div.col-md-4.col-xs-4.square-small(id='sq4')
+                    div.col-md-4.col-xs-4.square-small(id='sq5')
+                    div.col-md-4.col-xs-4.square-small(id='sq6')
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
+                    div.col-md-4.col-xs-4.square-small(id='sq7')
+                    div.col-md-4.col-xs-4.square-small(id='sq8')
+                    div.col-md-4.col-xs-4.square-small(id='sq9')
               div.col-md-2.col-xs-4.square
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small
-                     span.small.old.row21 0
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
+                    div.col-md-4.col-xs-4.square-small(id='sq10')
+                    div.col-md-4.col-xs-4.square-small(id='sq11')
+                    div.col-md-4.col-xs-4.square-small(id='sq12')
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small.collision-old
-                     span.small.old.row24 K
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
+                    div.col-md-4.col-xs-4.square-small.collision-old(id='sq13')
+                    div.col-md-4.col-xs-4.square-small(id='sq14')
+                    div.col-md-4.col-xs-4.square-small(id='sq15')
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
+                    div.col-md-4.col-xs-4.square-small(id='sq16')
+                    div.col-md-4.col-xs-4.square-small(id='sq17')
+                    div.col-md-4.col-xs-4.square-small(id='sq18')
               div.col-md-2.col-xs-4.square
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small
-                     span.small.old.row21 0
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
+                    div.col-md-4.col-xs-4.square-small(id='sq19')
+                    div.col-md-4.col-xs-4.square-small(id='sq20')
+                    div.col-md-4.col-xs-4.square-small(id='sq21')
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small.collision-old
-                     span.small.old.row24 K
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
+                    div.col-md-4.col-xs-4.square-small.collision-old(id='sq22')
+                     span.small.old
+                    div.col-md-4.col-xs-4.square-small(id='sq23')
+                    div.col-md-4.col-xs-4.square-small(id='sq24')
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
+                    div.col-md-4.col-xs-4.square-small(id='sq25')
+                    div.col-md-4.col-xs-4.square-small(id='sq26')
+                    div.col-md-4.col-xs-4.square-small(id='sq27')
               div.col-md-2.col-xs-4.text-center
                 p Активность
                 table.table
@@ -87,11 +84,44 @@ html
                   td X3
             div.row.text-center
               div.col-md-2.col-md-offset-3.col-xs-4.square
-                span.big.old X
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq28')
+                    div.col-md-4.col-xs-4.square-small(id='sq29')
+                    div.col-md-4.col-xs-4.square-small(id='sq30')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq31')
+                    div.col-md-4.col-xs-4.square-small(id='sq32')
+                    div.col-md-4.col-xs-4.square-small(id='sq33')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq34')
+                    div.col-md-4.col-xs-4.square-small(id='sq35')
+                    div.col-md-4.col-xs-4.square-small(id='sq36')
               div.col-md-2.col-xs-4.square
-                span.big.last X
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq37')
+                    div.col-md-4.col-xs-4.square-small(id='sq38')
+                    div.col-md-4.col-xs-4.square-small(id='sq39')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq40')
+                    div.col-md-4.col-xs-4.square-small(id='sq41')
+                    div.col-md-4.col-xs-4.square-small(id='sq42')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq43')
+                    div.col-md-4.col-xs-4.square-small(id='sq44')
+                    div.col-md-4.col-xs-4.square-small(id='sq45')
               div.col-md-2.col-xs-4.square
-                  span.big.old X
+                div.row.text-center
+                  div.col-md-4.col-xs-4.square-small(id='sq46')
+                  div.col-md-4.col-xs-4.square-small(id='sq47')
+                  div.col-md-4.col-xs-4.square-small(id='sq48')
+                div.row.text-center
+                  div.col-md-4.col-xs-4.square-small(id='sq49')
+                  div.col-md-4.col-xs-4.square-small(id='sq50')
+                  div.col-md-4.col-xs-4.square-small(id='sq51')
+                div.row.text-center
+                  div.col-md-4.col-xs-4.square-small(id='sq52')
+                  div.col-md-4.col-xs-4.square-small(id='sq53')
+                  div.col-md-4.col-xs-4.square-small(id='sq54')
               div.col-md-2.col-xs-4.text-center
                 table.table
                  tr
@@ -103,47 +133,48 @@ html
             div.row.text-center
               div.col-md-2.col-md-offset-3.col-xs-4.square
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
+                    div.col-md-4.col-xs-4.square-small(id='sq55')
+                    div.col-md-4.col-xs-4.square-small(id='sq56')
+                    div.col-md-4.col-xs-4.square-small(id='sq57')
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
+                    div.col-md-4.col-xs-4.square-small(id='sq58')
+                    div.col-md-4.col-xs-4.square-small(id='sq59')
+                    div.col-md-4.col-xs-4.square-small(id='sq60')
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
+                    div.col-md-4.col-xs-4.square-small(id='sq61')
+                    div.col-md-4.col-xs-4.square-small(id='sq62')
+                    div.col-md-4.col-xs-4.square-small(id='sq63')
               div.col-md-2.col-xs-4.collision
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small.collision
+                    div.col-md-4.col-xs-4.square-small.collision(id='sq64')
                       span.small.old.row12.collision X
-                    div.col-md-4.col-xs-4.square-small.collision
-                    div.col-md-4.col-xs-4.square-small.collision
+                    div.col-md-4.col-xs-4.square-small.collision(id='sq65')
+                    div.col-md-4.col-xs-4.square-small.collision(id='sq66')
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small.collision
-                    div.col-md-4.col-xs-4.square-small.collision
+                    div.col-md-4.col-xs-4.square-small.collision(id='sq67')
+                    div.col-md-4.col-xs-4.square-small.collision(id='sq68')
                       span.small.old.row12.collision X
-                    div.col-md-4.col-xs-4.square-small.collision
+                    div.col-md-4.col-xs-4.square-small.collision(id='sq69')
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small.collision
+                    div.col-md-4.col-xs-4.square-small.collision(id='sq70')
                       span.small.old.row12.collision X
-                    div.col-md-4.col-xs-4.square-small.collision
-                    div.col-md-4.col-xs-4.square-small.collision
+                    div.col-md-4.col-xs-4.square-small.collision(id='sq71')
+                    div.col-md-4.col-xs-4.square-small.collision(id='sq72')
               div.col-md-2.col-xs-4.square
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
+                    div.col-md-4.col-xs-4.square-small(id='sq73')
+                    div.col-md-4.col-xs-4.square-small(id='sq74')
+                    div.col-md-4.col-xs-4.square-small(id='sq75')
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
+                    div.col-md-4.col-xs-4.square-small(id='sq76')
+                    div.col-md-4.col-xs-4.square-small(id='sq77')
+                    div.col-md-4.col-xs-4.square-small(id='sq78')
                   div.row.text-center
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
-                    div.col-md-4.col-xs-4.square-small
-                     span.small.last.row39 0
+                    div.col-md-4.col-xs-4.square-small(id='sq79')
+                    div.col-md-4.col-xs-4.square-small(id='sq80')
+                     span.small.last X
+                    div.col-md-4.col-xs-4.square-small(id='sq81')
+                     span.small.last 0
 
          div.modal.fade(id="turnModal" tabindex="-1" role="dialog" aria-labelledby="turnModalLabel" aria-hidden="true")
            div.modal-dialog.modal-dialog-centered(role="document")
@@ -157,25 +188,25 @@ html
                    div.row.text-center
                         div.col-md-2.col-md-offset-2.col-xs-4.square
                          div.row.text-center
-                           div.col-md-4.col-xs-4.square-small
+                           div.col-md-4.col-xs-4.square-small(id='1' onclick='sendTurn(this,socket);')
                             span.small.last.sq1
-                           div.col-md-4.col-xs-4.square-small
+                           div.col-md-4.col-xs-4.square-small(id='2' onclick='sendTurn(this,socket);')
                             span.small.old.sq2
-                           div.col-md-4.col-xs-4.square-small
+                           div.col-md-4.col-xs-4.square-small(id='3' onclick='sendTurn(this,socket);')
                             span.small.old.sq3
                          div.row.text-center
-                           div.col-md-4.col-xs-4.square-small
+                           div.col-md-4.col-xs-4.square-small(id='4' onclick='sendTurn(this,socket);')
                             span.small.old.sq4
-                           div.col-md-4.col-xs-4.square-small
+                           div.col-md-4.col-xs-4.square-small(id='5' onclick='sendTurn(this,socket);')
                             span.small.old.sq5
-                           div.col-md-4.col-xs-4.square-small
+                           div.col-md-4.col-xs-4.square-small(id='6' onclick='sendTurn(this,socket);')
                             span.small.old.sq6
                          div.row.text-center
-                           div.col-md-4.col-xs-4.square-small
+                           div.col-md-4.col-xs-4.square-small(id='7' onclick='sendTurn(this,socket);')
                             span.small.old.sq7
-                           div.col-md-4.col-xs-4.square-small
+                           div.col-md-4.col-xs-4.square-small(id='8' onclick='sendTurn(this,socket);')
                             span.small.old.sq8
-                           div.col-md-4.col-xs-4.square-small
+                           div.col-md-4.col-xs-4.square-small(id='9' onclick='sendTurn(this,socket);')
                             span.small.old.sq9
                div.modal-footer
                 div.container

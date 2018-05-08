@@ -1,6 +1,7 @@
 var logger = {
-    debug: function (msg) {
-        //console.log(msg);
+    debug: function (msg, id) {
+        if(id == 1)
+            console.log(msg);
     },
     info: function (msg) {
         console.log(msg);
