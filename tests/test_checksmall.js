@@ -11,7 +11,7 @@ socket.emit('turn', {playerid: 2, squareid: 20});
 socket.emit('turn', {playerid: 3, squareid: 21});
 socket.emit('turn', {playerid: 4, squareid: 25});
 socket.emit('turn', {playerid: 5, squareid: 56});
-socket.emit('turn', {playerid: 6, squareid: 31});
+//socket.emit('turn', {playerid: 6, squareid: 31});
 socket.emit('print');
 
 socket.on('printOut', function (data) {

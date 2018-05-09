@@ -1,21 +1,21 @@
 var socket = io();
 var prevTurnSqrs = [];
 var turnAllowed;
+var players;
 
 if (prevTurnSqrs.length == 0)
     turnAllowed = true;
 
 var logger = {
     debug: function(msg, id) {
-        if(id == 1)
+        if(id == 2)
             console.log(msg);
     }
 };
 
-socket.emit('get state');
-
+// Socket events processing
 socket.on('current state', function(msg) {
-    //logger.debug(msg, 1);
+    logger.debug('Asking for a state', 1);
     setCurrentState(msg);
 });
 
@@ -24,14 +24,44 @@ socket.on('turn ends', function(msg) {
     updateOnTurnEnds(msg);
 });
 
+socket.on('player action', function(msg) {
+    logger.debug(msg,2);
+    $('#pstatus' + msg.playerid).css('font-weight', '900');
+});
+
+socket.emit('get state');
+
 var setCurrentState = function(obj) {
     var k;
-    logger.debug(obj['small'].length, 1);
+    //logger.debug(obj['small'], 1);
 
-    for (k in Object.keys(obj.small)) {
-        logger.debug('setCurrentState(): ' + k, 1);
-        //logger.debug('setCurrentState(): ' + obj['small'][k], 1);
-        //$('#sq'+el).html('<span class="small last">X</span>');
+    for (k in obj.small) {
+        //logger.debug('setCurrentState(): ' + k, 1);
+        if(obj.small.hasOwnProperty(k)) {
+            //logger.debug('setCurrentState(): ' + k + ' ' + obj.small[k], 1);
+            $('#sq'+k).html('<span class="small old">' + obj.small[k] + '</span>');
+        }
+    }
+
+    if(obj.winner != false) {
+        if(obj.winner === 'draw') {
+            $('#win-placeholder').text('Игра закончена вничью');
+        } else {
+            $('#win-placeholder').text('Игра завершена. Победили ' + obj.winner);
+        }
+        turnAllowed = false;
+    }
+
+    players = obj.players;
+};
+
+var resetActions = function() {
+    var id;
+    // using global players
+    for (var faction of ['X', '0']) {
+        for (id of players[faction  ]) {
+            $('#pstatus'+id).css('font-weight', 'normal');
+        }
     }
 };
 
@@ -50,6 +80,7 @@ var updateOnTurnEnds = function(msg) {
     var i = 0;
     var el;
     var updPrevTurnSqrs = [];
+    // Updating small squares
     for(el of msg['changes']['X']) {
         //console.log('updateOnTurnEnds() X:' + el);
         $('#sq'+el).html('<span class="small last">X</span>');
@@ -60,16 +91,41 @@ var updateOnTurnEnds = function(msg) {
         $('#sq'+el).html('<span class="small last">0</span>');
         updPrevTurnSqrs.push(el);
     }
+    // Updating taken lines of small squares
+    for(el of msg['small']['X']) {
+        //console.log('updateOnTurnEnds() 0:' + el);
+        $('#sq'+el).css('text-decoration','line-through white');
+    }
+    for(el of msg['small']['0']) {
+        //console.log('updateOnTurnEnds() 0:' + el);
+        $('#sq'+el).css('text-decoration','line-through white');
+    }
 
+    // Toggle the collision class for a last turn collision.
+    for(el of msg['collision']) {
+        $('#sq'+el).toggleClass('collision');
+    }
+
+    // Change the class for actions taken previously
     for(el of prevTurnSqrs) {
-        console.log('updateOnTurnEnds():' + el);
+        logger.debug('updateOnTurnEnds():' + el,666);
         $('#sq'+ el).children().toggleClass('old');
     }
     //old = msg['changes']['X'] + msg['changes']['0'];
     // Use this to change class later
+    resetActions();
     prevTurnSqrs = updPrevTurnSqrs;
-    // Prevents multiply turn modals.
-    turnAllowed = true;
+    if(msg.winner != false) {
+       if(msg.winner === 'draw') {
+           $('#win-placeholder').text('Игра закончена вничью');
+       } else {
+           $('#win-placeholder').text('Игра завершена. Победили ' + msg.winner);
+       }
+       // Prevents multiply turn modals.
+       turnAllowed = false;
+    } else {
+       turnAllowed = true;
+    }
 }
 
 var dummyTurn = function(socket, id) {
@@ -82,7 +138,6 @@ var dummyTurn = function(socket, id) {
 
 var sendTurn = function(obj, socket)
 {
-    //logger.debug(turnAllowed, 1);
     socket.emit('turn', {'playerid': 1, 'squareid': obj.id});
     hideTurnField();
 }
