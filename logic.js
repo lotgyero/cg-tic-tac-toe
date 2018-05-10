@@ -153,6 +153,7 @@ var gameModel = {
     state : 'stopped', // game current state
     turnCounter: 1, // turn counter
     players : { 'X': [1, 2, 3], '0': [ 4, 5, 6 ]}, // players' ids
+    usedSlots: [],
     big : ['E', 'E', 'E', 'E', 'E', 'E', 'E', 'E','E', 'E'], // left to right, top to bottom
     small : {}, // left to right, top to bottom, inside big square, then the next one
     dependencies: { 1: 2, 2: 3, 3:1, 4:5, 5:6, 6:4 },
@@ -168,16 +169,22 @@ var gameModel = {
         if (typeof playerId == 'undefined'|| typeof squareId == 'undefined' ){
             logger.info('gameModel.turn(): invalid input data.');
         }
+
         if ( this.turnBuf[playerId] != 0 ) {
             logger.debug(data, playerId, squareId);
             logger.debug(this.turnBuf);
             logger.info('gameModel.turn(): this turn action has been already taken.');
         } else if ( squareId < 1 || squareId > 81 ) {
             logger.debug('gameModel.turn(): wrong square-id.');
-        } else if (!checkAction(this, squareId)) {
+        } /*else if (!checkAction(this, squareId)) {
             logger.info('gameModel.turn(): wrong action - the square has been used.');
-        } else {
-            this.turnBuf[playerId] = squareId;
+        }*/ else {
+            if (!checkAction(this, squareId)) {
+                logger.info('gameModel.turn(): wrong action - the square has been used.');
+                this.turnBuf[playerId] = -1;
+            } else {
+                this.turnBuf[playerId] = squareId;
+            }
             var result = this.endTurn();
             logger.info('gameModel.turn() ' + result['changes']);
             // TODO could be an empty object, if all players collide with each other
@@ -201,7 +208,19 @@ var gameModel = {
     },
     useDependencies: function()
     {
-        return;
+        var temp = [0];
+        var bigSquareId;
+        logger.debug('useDependencies()', 3);
+        for(var i=0; i < this.turnBuf.length; i++) {
+            if(this.turnBuf[i] <= 0) {
+                continue;
+            }
+            bigSquareId = this.turnBuf[this.dependencies[i]];
+            temp.push(baseNumber * (bigSquareId - 1) + this.turnBuf[i]);
+            logger.debug(bigSquareId);
+        }
+        logger.debug(temp, 3);
+        this.turnBuf = temp;
     },
     endTurn: function()
     {
@@ -210,6 +229,14 @@ var gameModel = {
                 return {};
             }
         }
+
+        // The square has been already used in  one of the previous turns.
+        for(var i = 1; i < this.turnBuf.length; i++) {
+            if (this.turnBuf[i] === 0) {
+                return {};
+            }
+        }
+
         // Calculate the actual square ids and put them into the current turnBuf.
         this.useDependencies();
         // logger.debug(this);
@@ -342,12 +369,28 @@ var gameModel = {
         this.turnCounter += 1;
 
     },
+    getPlayerId: function(obj) {
+        var result = {'playerid': 0};
+        if(typeof obj.faction != 'undefined'
+            && (obj.faction == 'X' || obj.faction == '0')) {
+            logger.debug('get player id',3);
+            for(var playerid of this.players[obj.faction]) {
+                if(!this.usedSlots.includes(playerid)) {
+                    result.playerid = playerid;
+                    this.usedSlots.push(playerid);
+                    break;
+                }
+            }
+        }
+        return result;
+    },
     resetState: function() {
         this.big = ['E', 'E', 'E', 'E', 'E', 'E', 'E', 'E','E', 'E'];
         this.small = {};
         this.dependencies = { 1: 2, 2: 3, 3:1, 4:5, 5:6, 6:4 };
         this.turnBuf = [ 0, 0, 0, 0, 0, 0, 0];
         this.turnCounter = 1;
+        this.usedSlots = [];
     }
 }
 
