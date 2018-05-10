@@ -1,15 +1,9 @@
 extends layout
 
 block content
- ul
-   each val, index in model
-     li=index + ':' + val
- ul
-   each val, index in model.big
-     li=index + ':' + val
- ul
-   each val, index in model.small
-     li=index + ':' + val
+ div.row
+     div.col-md-6.col-md-offset-3
+       h1 Играем в #{title}
    
   
   

@@ -1,77 +1,165 @@
-extends layout
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    //link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+    //script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js')
+    script(src='/javascripts/jquery.min.js')
+    //script(src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js')
+    //script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js')
+    script(src='/javascripts/bootstrap.min.js')
+    script(src='/javascripts/socket.io.js')
+    script(src='/javascripts/client.js')
 
-block content
-  div.row
-    div.col-xs-12.text-center.header
-     h1 Играем в #{title}
-     div.container
-        div.row.text-center
-          div.col-md-2.col-md-offset-3.col-xs-4.square
-              div.row.text-center
-                div.col-md-4.col-xs-4.square-small
-                 span.small.last.row11 X
-                div.col-md-4.col-xs-4.square-small
-                 span.small.old.row12 X
-                div.col-md-4.col-xs-4.square-small
-              div.row.text-center
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small
-              div.row.text-center
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small
-          div.col-md-2.col-xs-4.square
-              div.row.text-center
-                div.col-md-4.col-xs-4.square-small
-                 span.small.old.row21 0
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small
-              div.row.text-center
-                div.col-md-4.col-xs-4.square-small
-                 span.small.collision.row24 K
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small
-              div.row.text-center
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small
-          div.col-md-2.col-xs-4.square
-            span.big.last.collision K
-        div.row.text-center
-          div.col-md-2.col-md-offset-3.col-xs-4.square
-            span.big.old X
-          div.col-md-2.col-xs-4.square
-            span.big.last X
-          div.col-md-2.col-xs-4.square
-              span.big.old X
-        div.row.text-center
-          div.col-md-2.col-md-offset-3.col-xs-4.square
-              div.row.text-center
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small
-              div.row.text-center
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small
-              div.row.text-center
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small
-          div.col-md-2.col-xs-4.square
-            span.big.old 0
-          div.col-md-2.col-xs-4.square
-              div.row.text-center
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small
-              div.row.text-center
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small
-              div.row.text-center
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small              
-                div.col-md-4.col-xs-4.square-small
-                 span.small.last.row39 0
+  body
+      div.row
+        div.col-xs-12.text-center.header
+         h1(id='win-placeholder') Наблюдаем за игрой
+         //div.container(data-toggle="modal" data-target="#turnModal")
+         div.container()
+            div.row.text-center
+              div.col-md-2.col-md-offset-3.col-xs-4.square
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq1')
+                    div.col-md-4.col-xs-4.square-small(id='sq2')
+                    div.col-md-4.col-xs-4.square-small(id='sq3')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq4')
+                    div.col-md-4.col-xs-4.square-small(id='sq5')
+                    div.col-md-4.col-xs-4.square-small(id='sq6')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq7')
+                    div.col-md-4.col-xs-4.square-small(id='sq8')
+                    div.col-md-4.col-xs-4.square-small(id='sq9')
+              div.col-md-2.col-xs-4.square
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq10')
+                    div.col-md-4.col-xs-4.square-small(id='sq11')
+                    div.col-md-4.col-xs-4.square-small(id='sq12')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq13')
+                    div.col-md-4.col-xs-4.square-small(id='sq14')
+                    div.col-md-4.col-xs-4.square-small(id='sq15')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq16')
+                    div.col-md-4.col-xs-4.square-small(id='sq17')
+                    div.col-md-4.col-xs-4.square-small(id='sq18')
+              div.col-md-2.col-xs-4.square
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq19')
+                    div.col-md-4.col-xs-4.square-small(id='sq20')
+                    div.col-md-4.col-xs-4.square-small(id='sq21')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq22')
+                     span.small.old
+                    div.col-md-4.col-xs-4.square-small(id='sq23')
+                    div.col-md-4.col-xs-4.square-small(id='sq24')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq25')
+                    div.col-md-4.col-xs-4.square-small(id='sq26')
+                    div.col-md-4.col-xs-4.square-small(id='sq27')
+              div.col-md-2.col-xs-4.text-center
+                p Активность
+                table.table
+                 tr
+                  td
+                   p(id='pstatus1') X1
+                 tr
+                  td
+                   p(id='pstatus2') X2
+                 tr
+                  td
+                   p(id='pstatus3') X3
+            div.row.text-center
+              div.col-md-2.col-md-offset-3.col-xs-4.square
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq28')
+                    div.col-md-4.col-xs-4.square-small(id='sq29')
+                    div.col-md-4.col-xs-4.square-small(id='sq30')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq31')
+                    div.col-md-4.col-xs-4.square-small(id='sq32')
+                    div.col-md-4.col-xs-4.square-small(id='sq33')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq34')
+                    div.col-md-4.col-xs-4.square-small(id='sq35')
+                    div.col-md-4.col-xs-4.square-small(id='sq36')
+              div.col-md-2.col-xs-4.square
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq37')
+                    div.col-md-4.col-xs-4.square-small(id='sq38')
+                    div.col-md-4.col-xs-4.square-small(id='sq39')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq40')
+                    div.col-md-4.col-xs-4.square-small(id='sq41')
+                    div.col-md-4.col-xs-4.square-small(id='sq42')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq43')
+                    div.col-md-4.col-xs-4.square-small(id='sq44')
+                    div.col-md-4.col-xs-4.square-small(id='sq45')
+              div.col-md-2.col-xs-4.square
+                div.row.text-center
+                  div.col-md-4.col-xs-4.square-small(id='sq46')
+                  div.col-md-4.col-xs-4.square-small(id='sq47')
+                  div.col-md-4.col-xs-4.square-small(id='sq48')
+                div.row.text-center
+                  div.col-md-4.col-xs-4.square-small(id='sq49')
+                  div.col-md-4.col-xs-4.square-small(id='sq50')
+                  div.col-md-4.col-xs-4.square-small(id='sq51')
+                div.row.text-center
+                  div.col-md-4.col-xs-4.square-small(id='sq52')
+                  div.col-md-4.col-xs-4.square-small(id='sq53')
+                  div.col-md-4.col-xs-4.square-small(id='sq54')
+              div.col-md-2.col-xs-4.text-center
+                table.table
+                 tr
+                  td
+                   p(id='pstatus4') 01
+                 tr
+                  td
+                   p(id='pstatus5') 02
+                 tr
+                  td
+                   p(id='pstatus6') 03
+            div.row.text-center
+              div.col-md-2.col-md-offset-3.col-xs-4.square
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq55')
+                    div.col-md-4.col-xs-4.square-small(id='sq56')
+                    div.col-md-4.col-xs-4.square-small(id='sq57')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq58')
+                    div.col-md-4.col-xs-4.square-small(id='sq59')
+                    div.col-md-4.col-xs-4.square-small(id='sq60')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq61')
+                    div.col-md-4.col-xs-4.square-small(id='sq62')
+                    div.col-md-4.col-xs-4.square-small(id='sq63')
+              div.col-md-2.col-xs-4
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq64')
+                    div.col-md-4.col-xs-4.square-small(id='sq65')
+                    div.col-md-4.col-xs-4.square-small(id='sq66')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq67')
+                    div.col-md-4.col-xs-4.square-small(id='sq68')
+                    div.col-md-4.col-xs-4.square-small(id='sq69')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq70')
+                    div.col-md-4.col-xs-4.square-small(id='sq71')
+                    div.col-md-4.col-xs-4.square-small(id='sq72')
+              div.col-md-2.col-xs-4.square
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq73')
+                    div.col-md-4.col-xs-4.square-small(id='sq74')
+                    div.col-md-4.col-xs-4.square-small(id='sq75')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq76')
+                    div.col-md-4.col-xs-4.square-small(id='sq77')
+                    div.col-md-4.col-xs-4.square-small(id='sq78')
+                  div.row.text-center
+                    div.col-md-4.col-xs-4.square-small(id='sq79')
+                    div.col-md-4.col-xs-4.square-small(id='sq80')
+                    div.col-md-4.col-xs-4.square-small(id='sq81')

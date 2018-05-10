@@ -1,6 +1,18 @@
-extends layout
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    //link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+    //script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js')
+    script(src='/javascripts/jquery.min.js')
+    //script(src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js')
+    //script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js')
+    script(src='/javascripts/bootstrap.min.js')
+    script(src='/javascripts/socket.io.js')
+    script(src='/javascripts/config-client.js')
 
-block content
   div.container
    div.row
     div.col-md-8.col-md-offset-4
@@ -30,3 +42,6 @@ block content
                  input.form-control(type='text')
 
         button.btn.btn-default Изменить
+    div.row.text-center
+        div.col-md-3.col-md-offset-5
+          button.btn.btn-default(onclick="restartGame();") Перезапустить
