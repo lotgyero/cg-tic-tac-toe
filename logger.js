@@ -1,6 +1,6 @@
 var logger = {
     debug: function (msg, id) {
-        if(id == 1)
+        if(id == 3)
             console.log(msg);
     },
     info: function (msg) {

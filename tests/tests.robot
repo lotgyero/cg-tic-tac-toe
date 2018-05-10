@@ -11,7 +11,7 @@ Check initial state and small funcs
 
 Check small world funcs
     ${result} =    Run Process    node ./tests/test_checkturn.js 1   shell=True    cwd=./
-    Should Contain  ${result.stdout}    changes: { '0': [ 28, 29, 30 ], X: [ 19, 20, 21 ] } }
+    Should Contain  ${result.stdout}    { '0': [ 28, 29, 30 ], X: [ 19, 20, 21 ] }
     Should Contain  ${result.stdout}    big: { '0': [ 4 ], X: [ 3 ] }
     Should Contain  ${result.stdout}    big: [ 'E', 'E', 'E', 'X', '0', 'E', 'E', 'E', 'E', 'E' ],
     Should Contain  ${result.stdout}    small: { '19': 'X', '20': 'X', '21': 'X', '28': '0', '29': '0', '30': '0' },
@@ -24,8 +24,8 @@ Check small world 0 collision
 
 Check big check functions
     ${result} =    Run Process    node ./tests/test_checkturn.js 1   shell=True    cwd=./
-    Should Contain    ${result.stdout}  big: [ 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E' ],
-    Should Contain  ${result.stdout}    changes: { '0': [ 28, 29, 30 ], X: [ 19, 20, 21 ] } }
+    Should Contain  ${result.stdout}  big: [ 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E' ],
+    Should Contain  ${result.stdout}    changes: { '0': [ 28, 29, 30 ], X: [ 19, 20, 21 ] }
     Should Contain  ${result.stdout}    big: { '0': [ 4 ], X: [ 3 ] }
     Should Contain  ${result.stdout}    big: [ 'E', 'E', 'E', 'X', '0', 'E', 'E', 'E', 'E', 'E' ],
 
@@ -46,3 +46,13 @@ Check draw check functions
     Should Contain  ${result.stdout}    big: [ 'E', 'X', 'X', 'X', '0', '0', '0', 'E', 'E', 'E' ],
     Should Contain  ${result.stdout}    big: { '0': [ 6 ], X: [ 2 ] }
     Should Contain  ${result.stdout}    winner: 'draw'
+
+Check menu player id functions
+    ${result} =    Run Process    node ./tests/test_menu.js 1   shell=True    cwd=./
+    Should Contain  ${result.stdout}    { playerid: 1 }
+    Should Contain  ${result.stdout}    { playerid: 2 }
+    Should Contain  ${result.stdout}    { playerid: 3 }
+    Should Contain  ${result.stdout}    { playerid: 4 }
+    Should Contain  ${result.stdout}    { playerid: 5 }
+    Should Contain  ${result.stdout}    { playerid: 6 }
+    Should Contain  ${result.stdout}    { playerid: 0 }

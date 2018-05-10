@@ -2,9 +2,13 @@ var socket = io();
 var prevTurnSqrs = [];
 var turnAllowed;
 var players;
+var playerid;
 
-if (prevTurnSqrs.length == 0)
+if (prevTurnSqrs.length == 0) {
     turnAllowed = true;
+    var parsedUrl = new URL(window.location.href);
+    playerid = parsedUrl.searchParams.get("playerid");
+}
 
 var logger = {
     debug: function(msg, id) {
@@ -20,7 +24,7 @@ socket.on('current state', function(msg) {
 });
 
 socket.on('turn ends', function(msg) {
-    logger.debug(msg,1);
+    logger.debug(msg,2);
     updateOnTurnEnds(msg);
 });
 
@@ -138,6 +142,6 @@ var dummyTurn = function(socket, id) {
 
 var sendTurn = function(obj, socket)
 {
-    socket.emit('turn', {'playerid': 1, 'squareid': obj.id});
+    socket.emit('turn', {'playerid': Number(playerid), 'squareid': Number(obj.id)});
     hideTurnField();
 }

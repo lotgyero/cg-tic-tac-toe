@@ -37,6 +37,7 @@ server.on('listening', onListening);
 var io = require('socket.io')(server);
 io.on('connection', function (socket) {
   var turnCounter = gameModel.turn;
+  //socket.join('menu');
   /*setInterval(function(){
     if(gameModel.turnCounter != turnCounter)
     {
@@ -46,11 +47,17 @@ io.on('connection', function (socket) {
   }, 1000);*/
 
   socket.on('turn_up', function(data) {
-    console.log('incTurn()');
+    logger.debug('incTurn()');
     gameModel.incTurn(); });
 
   socket.on('print', function () {
     socket.emit('printOut', gameModel);
+  });
+
+  socket.on('get player id', function (msg) {
+    //logger.debug('get player id',3);
+    logger.debug(msg,3);
+    socket.emit('playerid', gameModel.getPlayerId(msg));
   });
 
   socket.on('turn', function(data) {
@@ -59,10 +66,10 @@ io.on('connection', function (socket) {
       if (typeof msg != 'undefined') {
           logger.debug(msg, 1);
           //msg['changes']['X'] = [];
-          socket.emit('turn ends', msg);
+          io.sockets.emit('turn ends', msg);
       } else {
         if (data.playerid >= 1 && data.playerid <= 6)
-          socket.emit('player action', { 'playerid': data.playerid });
+          io.sockets.emit('player action', { 'playerid': data.playerid });
       }
 
   });
@@ -80,6 +87,9 @@ io.on('connection', function (socket) {
       gameModel.start();
    });
 });
+
+//menu room
+var menuSocket = io.of('/');
 
 /**
  * Normalize a port into a number, string, or false.
