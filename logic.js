@@ -382,6 +382,11 @@ var gameModel = {
                 }
             }
         }
+        if (this.usedSlots.length == this.players['X'].length + this.players['X'].length &&
+            this.state == 'stopped' )
+        {
+            this.start();
+        }
         return result;
     },
     resetState: function() {
@@ -391,6 +396,18 @@ var gameModel = {
         this.turnBuf = [ 0, 0, 0, 0, 0, 0, 0];
         this.turnCounter = 1;
         this.usedSlots = [];
+        this.state = 'stopped';
+    },
+    actionAllowed: function(obj) {
+        if ( this.state == 'in progress'
+            && obj.hasOwnProperty('playerid')
+            && obj.playerid >= 1
+            && obj.playerid <= this.players['X'].length + this.players['X'].length
+            && this.usedSlots.includes(obj.playerid))
+        {
+            return true;
+        }
+        return false;
     }
 }
 

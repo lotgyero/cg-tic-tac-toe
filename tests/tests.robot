@@ -2,7 +2,7 @@
 Library           Process
 Suite Teardown    Terminate All Processes    kill=True
 
-*** Test Cases ***
+*** comments *** //TODO fix square ids used for testing
 Check initial state and small funcs
     ${result} =    Run Process    node ./tests/test_checkturn.js 1   shell=True    cwd=./
     Should Contain    ${result.stdout}  state: 'in progress',
@@ -56,3 +56,17 @@ Check menu player id functions
     Should Contain  ${result.stdout}    { playerid: 5 }
     Should Contain  ${result.stdout}    { playerid: 6 }
     Should Contain  ${result.stdout}    { playerid: 0 }
+
+*** Test cases ***
+Check initial state
+    ${result} =    Run Process    node ./tests/test_checkturn.js 6   shell=True    cwd=./
+    Should Contain  ${result.stdout}    state: 'stopped'
+    Should Not Contain  ${result.stdout}    { playerid: 5 }
+    Should Not Contain  ${result.stdout}    { playerid: 1 }
+    Should Contain  ${result.stdout}    usedSlots: [ 1 ]
+
+Check game start conditions
+    ${result} =    Run Process    node ./tests/test_checkturn.js 7   shell=True    cwd=./
+    Should Contain  ${result.stdout}    state: 'in progress'
+    Should Contain  ${result.stdout}    usedSlots: [ 1, 2, 3, 4, 5, 6 ]
+    Should Contain  ${result.stdout}    playerid received 0

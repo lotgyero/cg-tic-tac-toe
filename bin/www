@@ -57,18 +57,19 @@ io.on('connection', function (socket) {
   socket.on('get player id', function (msg) {
     //logger.debug('get player id',3);
     logger.debug(msg,3);
+    //TODO add socket id to the list for auth checks
     socket.emit('playerid', gameModel.getPlayerId(msg));
   });
 
   socket.on('turn', function(data) {
-      logger.debug(data, 1);
+      logger.debug(data, 3);
       var msg = gameModel.turn(data);
       if (typeof msg != 'undefined') {
-          logger.debug(msg, 1);
-          //msg['changes']['X'] = [];
+          logger.debug(msg, 3);
           io.sockets.emit('turn ends', msg);
       } else {
-        if (data.playerid >= 1 && data.playerid <= 6)
+        // TODO remove hardcoded id boundaries
+        if (gameModel.actionAllowed(data))
           io.sockets.emit('player action', { 'playerid': data.playerid });
       }
 

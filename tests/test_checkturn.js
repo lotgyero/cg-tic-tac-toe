@@ -9,7 +9,7 @@ socket.on('turn ends', function (data) {
     console.log(data);
 });
 
-console.log(typeof process.argv[2]);
+//console.log(typeof process.argv[2]);
 
 switch (process.argv[2]){
     case '1': // simple turn test
@@ -111,6 +111,43 @@ switch (process.argv[2]){
         socket.emit('turn', {playerid: 2, squareid: 11});
         socket.emit('turn', {playerid: 5, squareid: 48});
         //socket.emit('turn', {playerid: 1, squareid: 12});
+        socket.emit('print');
+        break;
+    case '6': // test state before the start
+        socket.emit('reset');
+        socket.on('player action', function(msg) {
+            console.log(msg);
+        });
+        //socket.emit('print');
+        //socket.emit('start');
+        //socket.emit('turn', {playerid: 1, squareid: 19});
+        //socket.emit('turn', {playerid: 2, squareid: 20});
+        //socket.emit('turn', {playerid: 3, squareid: 21});
+        //socket.emit('turn', {playerid: 4, squareid: 28});
+        //socket.emit('turn', {playerid: 5, squareid: 29});
+        //socket.emit('turn', {playerid: 6, squareid: 30});
+        socket.emit('print');
+        socket.emit('turn', {playerid: 5, squareid: 1});
+        socket.emit('get player id', { 'faction': 'X' });
+        socket.emit('turn', {playerid: 1, squareid: 2});
+        socket.emit('print');
+
+        break;
+
+    case '7': // test state after the start
+        socket.emit('reset');
+        //socket.emit('print');
+        //socket.emit('start');
+        socket.on('playerid', function(msg) {
+            console.log('playerid received ' + msg.playerid);
+        });
+        socket.emit('get player id', { 'faction': 'X' });
+        socket.emit('get player id', { 'faction': 'X' });
+        socket.emit('get player id', { 'faction': 'X' });
+        socket.emit('get player id', { 'faction': '0' });
+        socket.emit('get player id', { 'faction': '0' });
+        socket.emit('get player id', { 'faction': '0' });
+        socket.emit('get player id', { 'faction': '0' });
         socket.emit('print');
         break;
 }
