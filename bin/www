@@ -38,13 +38,6 @@ var io = require('socket.io')(server);
 io.on('connection', function (socket) {
   var turnCounter = gameModel.turn;
   //socket.join('menu');
-  /*setInterval(function(){
-    if(gameModel.turnCounter != turnCounter)
-    {
-        //socket.emit('ping', gameModel.ping());
-        turnCounter = gameModel.turnCounter;
-    }
-  }, 1000);*/
 
   socket.on('turn_up', function(data) {
     logger.debug('incTurn()');
@@ -58,19 +51,25 @@ io.on('connection', function (socket) {
     //logger.debug('get player id',3);
     logger.debug(msg,3);
     //TODO add socket id to the list for auth checks
-    socket.emit('playerid', gameModel.getPlayerId(msg));
+    var result = gameModel.getPlayerId(msg);
+    socket.emit('playerid', result);
+    if(result.hasOwnProperty('begin') && result['begin'] === true) {
+        logger.debug(result,4);
+        io.sockets.emit('game starts', {'begin': true});
+    }
   });
 
   socket.on('turn', function(data) {
+      if (typeof msg != 'undefined') {
       logger.debug(data, 3);
       var msg = gameModel.turn(data);
-      if (typeof msg != 'undefined') {
           logger.debug(msg, 3);
           io.sockets.emit('turn ends', msg);
       } else {
-        // TODO remove hardcoded id boundaries
-        if (gameModel.actionAllowed(data))
+        if (gameModel.actionAllowed(data)) {
           io.sockets.emit('player action', { 'playerid': data.playerid });
+          logger.debug('Action was allowed.', 4);
+        }
       }
 
   });

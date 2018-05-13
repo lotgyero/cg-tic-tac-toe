@@ -1,11 +1,11 @@
 var socket = io();
 var prevTurnSqrs = [];
-var turnAllowed;
+var turnAllowed = false;
 var players;
 var playerid;
 
 if (prevTurnSqrs.length == 0) {
-    turnAllowed = true;
+    //turnAllowed = true;
     var parsedUrl = new URL(window.location.href);
     playerid = parsedUrl.searchParams.get("playerid");
 }
@@ -33,11 +33,18 @@ socket.on('player action', function(msg) {
     $('#pstatus' + msg.playerid).css('font-weight', '900');
 });
 
+socket.on('game starts', function(msg) {
+    //TODO show modal
+    turnAllowed = true;
+});
+
 socket.emit('get state');
 
 var setCurrentState = function(obj) {
     var k;
     //logger.debug(obj['small'], 1);
+    if(obj['state'] == true)
+        turnAllowed = true;
 
     for (k in obj.small) {
         //logger.debug('setCurrentState(): ' + k, 1);

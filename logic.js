@@ -386,6 +386,7 @@ var gameModel = {
             this.state == 'stopped' )
         {
             this.start();
+            result['begin'] = true;
         }
         return result;
     },
@@ -399,6 +400,7 @@ var gameModel = {
         this.state = 'stopped';
     },
     actionAllowed: function(obj) {
+        //logger.debug(obj,4);
         if ( this.state == 'in progress'
             && obj.hasOwnProperty('playerid')
             && obj.playerid >= 1
