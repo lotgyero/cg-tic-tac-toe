@@ -410,6 +410,15 @@ var gameModel = {
             return true;
         }
         return false;
+    },
+    playerAlive: function(msg) {
+
+    },
+    pokePlayers: function() {
+
+    },
+    isStarted: function() {
+        return this.state == 'in progress'
     }
 }
 

@@ -28,6 +28,8 @@ var addUsers = function() {
     socket.emit('get player id', { 'faction': '0' });
 }
 
+var timeout = 1000;
+
 switch (process.argv[2]){
     case '1': // simple turn test
         socket.emit('reset');
@@ -138,7 +140,6 @@ switch (process.argv[2]){
         socket.emit('turn', {playerid: 1, squareid: 2});
         socket.emit('print');
         break;
-
     case '7': // test state after the start
         socket.emit('reset');
         socket.on('playerid', function(msg) {
@@ -149,6 +150,31 @@ switch (process.argv[2]){
         socket.emit('print');
         socket.emit('turn', {playerid: 1, squareid: 2});
         break;
+    case '8': // poke players before the game starts
+        socket.emit('reset');
+        socket.on('playerid', function(msg) {
+            console.log('playerid received ' + msg.playerid);
+        });
+        socket.emit('alive', {'playerid': 1});
+        socket.emit('print');
+
+        break;
+    case '9': // poke players after the game starts
+        timeout = 2000;
+        socket.emit('reset');
+        socket.on('playerid', function(msg) {
+            console.log('playerid received ' + msg.playerid);
+        });
+        addUsers();
+        socket.emit('get player id', { 'faction': '0' });
+        socket.emit('alive', {'playerid': 1});
+        socket.emit('alive', {'playerid': 2});
+        socket.emit('alive', {'playerid': 3});
+        socket.emit('alive', {'playerid': 4});
+        var ch = function () { socket.emit('print'); };
+        setTimeout(ch, 500);
+        break;
+
 }
 
-setTimeout( () => { process.exit(0); }, 1000);
+setTimeout( () => { process.exit(0); }, timeout);

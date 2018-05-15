@@ -83,10 +83,27 @@ io.on('connection', function (socket) {
   socket.on('reset', function () {
     gameModel.resetState();
   });
+
   socket.on('start', function() {
       gameModel.start();
-   });
+  });
+
+  socket.on('alive', function(msg) {
+    gameModel.playerAlive(msg);
+  });
+
 });
+
+var emitCheck = function() {
+    gameModel.pokePlayers();
+    if(gameModel.isStarted()) {
+        logger.debug('check', 4);
+        io.sockets.emit('check');
+    }
+};
+
+// Emits check message each 10 seconds
+setInterval(emitCheck, 10000);
 
 //menu room
 var menuSocket = io.of('/');
