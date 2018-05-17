@@ -10,6 +10,8 @@ var logger = require('./logger');
 
 var baseNumber = 9;
 
+var PLAYER_TO = 4;
+
 /**
  * Checks whether the small grid square is free or not.
  */
@@ -158,6 +160,7 @@ var gameModel = {
     small : {}, // left to right, top to bottom, inside big square, then the next one
     dependencies: { 1: 2, 2: 3, 3:1, 4:5, 5:6, 6:4 },
     turnBuf : [ 0, 0, 0, 0, 0, 0, 0], // current turn actions
+    playerPokeArea : [ 0, 0, 0, 0, 0, 0, 0], // check player online using the structure
     winner: false,
     start: function() {
         this.state = 'in progress';
@@ -360,7 +363,12 @@ var gameModel = {
         return result;
     },
     getCurrentState: function () {
-        return {'small': this.small, 'big': this.big, 'winner': this.winner, 'players': this.players};
+        return {'small': this.small,
+                'big': this.big,
+                'winner': this.winner,
+                'players': this.players,
+                'playerPokeArea': this.playerPokeArea
+        };
     },
     ping: function() {
         return {state: this.state, turn: this.turnCounter};
@@ -395,6 +403,7 @@ var gameModel = {
         this.small = {};
         this.dependencies = { 1: 2, 2: 3, 3:1, 4:5, 5:6, 6:4 };
         this.turnBuf = [ 0, 0, 0, 0, 0, 0, 0];
+        this.playerPokeArea = [ 0, 0, 0, 0, 0, 0, 0];
         this.turnCounter = 1;
         this.usedSlots = [];
         this.state = 'stopped';
@@ -412,10 +421,31 @@ var gameModel = {
         return false;
     },
     playerAlive: function(msg) {
-
+        this.playerPokeArea[msg.playerid] = 0;
     },
     pokePlayers: function() {
+        var pokePlayersArray = [];
+        if(!this.isStarted())
+            return pokePlayersArray;
 
+        for (var i = 1; i < this.playerPokeArea.length; i++) {
+            if(this.usedSlots.includes(i)) {
+                this.playerPokeArea[i] += 1;
+            }
+            logger.debug(this.playerPokeArea[i],4);
+            if(this.playerPokeArea[i] >= PLAYER_TO && this.usedSlots.includes(i)) {
+                pokePlayersArray.push(i);
+                this.playerPokeArea[i] = 0;
+            }
+        }
+        logger.debug('pokePlayersArray:', 4);
+        logger.debug(pokePlayersArray,4);
+        logger.debug('usedSlots() before:', 4);
+        logger.debug(this.usedSlots, 4);
+        this.usedSlots = this.usedSlots.filter(x => !pokePlayersArray.includes(x));
+        logger.debug('usedSlots() after:', 4);
+        logger.debug(this.usedSlots, 4);
+        return pokePlayersArray;
     },
     isStarted: function() {
         return this.state == 'in progress'

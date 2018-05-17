@@ -73,3 +73,11 @@ Check game start conditions
     Should Contain  ${result.stdout}    playerid received 0
     Should Contain  ${result.stdout}    { playerid: 1 }
     Should Contain  ${result.stdout}    { begin: true }
+
+Check player status functions
+    ${result} =    Run Process    node ./tests/test_checkturn.js 9   shell=True    cwd=./
+    Should Contain  ${result.stdout}    state: 'in progress'
+    Should Contain  ${result.stdout}    usedSlots: [ 1, 2, 3, 4 ]
+    Should Contain  ${result.stdout}    playerPokeArea: [ 0, 0, 0, 0, 0, 1, 1 ],
+    Should Contain  ${result.stdout}    playerPokeArea: [ 0, 0, 0, 0, 0, 2, 2 ],
+    Should Contain  ${result.stdout}    disconnected players 5,6

@@ -53,8 +53,10 @@ io.on('connection', function (socket) {
     //TODO add socket id to the list for auth checks
     var result = gameModel.getPlayerId(msg);
     socket.emit('playerid', result);
+    io.sockets.emit('player online', result); // Tell the players he is online
     if(result.hasOwnProperty('begin') && result['begin'] === true) {
         logger.debug(result,4);
+        logger.debug('the game has begun',4);
         io.sockets.emit('game starts', {'begin': true});
     }
   });
@@ -95,7 +97,10 @@ io.on('connection', function (socket) {
 });
 
 var emitCheck = function() {
-    gameModel.pokePlayers();
+    var zombiePlayers = gameModel.pokePlayers();
+    if(zombiePlayers.length > 0) {
+        io.sockets.emit('disconnected players', {'zombies': zombiePlayers});
+    }
     if(gameModel.isStarted()) {
         logger.debug('check', 4);
         io.sockets.emit('check');

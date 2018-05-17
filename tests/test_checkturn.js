@@ -19,13 +19,15 @@ socket.on('game starts', function(msg) {
 
 //console.log(typeof process.argv[2]);
 
-var addUsers = function() {
+var addUsers = function(number) {
     socket.emit('get player id', { 'faction': 'X' });
     socket.emit('get player id', { 'faction': 'X' });
     socket.emit('get player id', { 'faction': 'X' });
     socket.emit('get player id', { 'faction': '0' });
     socket.emit('get player id', { 'faction': '0' });
-    socket.emit('get player id', { 'faction': '0' });
+    if(number >= 6)
+        socket.emit('get player id', { 'faction': '0' });
+
 }
 
 var timeout = 1000;
@@ -160,19 +162,31 @@ switch (process.argv[2]){
 
         break;
     case '9': // poke players after the game starts
-        timeout = 2000;
+        timeout = 60000;
         socket.emit('reset');
         socket.on('playerid', function(msg) {
             console.log('playerid received ' + msg.playerid);
         });
-        addUsers();
-        socket.emit('get player id', { 'faction': '0' });
-        socket.emit('alive', {'playerid': 1});
-        socket.emit('alive', {'playerid': 2});
-        socket.emit('alive', {'playerid': 3});
-        socket.emit('alive', {'playerid': 4});
+        socket.on('disconnected players', function(msg) {
+            console.log('disconnected players ' + msg.zombies);
+        });
+        addUsers(5);
+        //socket.emit('get player id', { 'faction': '0' });
+        var keepThemAlive = function () {
+            socket.emit('alive', {'playerid': 1});
+            socket.emit('alive', {'playerid': 2});
+            socket.emit('alive', {'playerid': 3});
+            socket.emit('alive', {'playerid': 4});
+        }
+        setTimeout(keepThemAlive, 13000);
+        setTimeout(keepThemAlive, 23000);
+        setTimeout(keepThemAlive, 33000);
+        setTimeout(keepThemAlive, 43000);
+        setTimeout(keepThemAlive, 53000);
         var ch = function () { socket.emit('print'); };
-        setTimeout(ch, 500);
+        setTimeout(ch, 15000);
+        setTimeout(ch, 25000);
+        setTimeout(ch, 45000);
         break;
 
 }

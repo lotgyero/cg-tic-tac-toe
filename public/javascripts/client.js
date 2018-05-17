@@ -12,30 +12,48 @@ if (prevTurnSqrs.length == 0) {
 
 var logger = {
     debug: function(msg, id) {
-        if(id == 2)
+        if(id == 4)
             console.log(msg);
     }
 };
 
-// Socket events processing
-socket.on('current state', function(msg) {
-    logger.debug('Asking for a state', 1);
-    setCurrentState(msg);
-});
+io.on('connection', function (socket) {
+    // Socket events processing
+    socket.on('current state', function(msg) {
+        logger.debug('Asking for a state', 1);
+        setCurrentState(msg);
+    });
 
-socket.on('turn ends', function(msg) {
-    logger.debug(msg,2);
-    updateOnTurnEnds(msg);
-});
+    socket.on('turn ends', function(msg) {
+        logger.debug(msg,2);
+        updateOnTurnEnds(msg);
+    });
 
-socket.on('player action', function(msg) {
-    logger.debug(msg,2);
-    $('#pstatus' + msg.playerid).css('font-weight', '900');
-});
+    socket.on('player action', function(msg) {
+        logger.debug(msg,2);
+        $('#pstatus' + msg.playerid).css('font-weight', '900');
+    });
 
-socket.on('game starts', function(msg) {
-    //TODO show modal
-    turnAllowed = true;
+    socket.on('game starts', function(msg) {
+        //TODO show modal
+        logger.debug('game starts',3);
+        turnAllowed = true;
+    });
+
+    socket.on('check', function() {
+        logger.debug('check event', 3);
+        socket.emit('alive', {'playerid': playerid});
+    });
+
+    socket.on('disconnected players', function(msg) {
+        logger.debug('disconnected players ' + msg.zombie);
+        disconnectPlayers(msg);
+    });
+
+    socket.on('player online', function(msg) {
+        logger.debug('player online' + msg.playerid);
+        connectPlayer(msg);
+    });
 });
 
 socket.emit('get state');
@@ -70,10 +88,22 @@ var resetActions = function() {
     var id;
     // using global players
     for (var faction of ['X', '0']) {
-        for (id of players[faction  ]) {
+        for (id of players[faction]) {
             $('#pstatus'+id).css('font-weight', 'normal');
         }
     }
+};
+
+var disconnectPlayers = function(obj) {
+    for (var id of obj.zombies) {
+        $('#pstatus'+id).css('color', 'red');
+    }
+};
+
+// Set the player status on re-/connection.
+var connectPlayer = function(obj) {
+    $('#pstatus'+obj.playerid).css('font-weight', 'normal');
+    $('#pstatus'+obj.playerid).css('color', 'black');
 };
 
 var hideTurnField = function(){
@@ -137,14 +167,6 @@ var updateOnTurnEnds = function(msg) {
     } else {
        turnAllowed = true;
     }
-}
-
-var dummyTurn = function(socket, id) {
-    socket.emit('turn', {'playerid': 2, 'squareid': id+1});
-    socket.emit('turn', {'playerid': 3, 'squareid': id+2});
-    socket.emit('turn', {'playerid': 4, 'squareid': id+3});
-    socket.emit('turn', {'playerid': 5, 'squareid': id+4});
-    socket.emit('turn', {'playerid': 6, 'squareid': id+5});
 }
 
 var sendTurn = function(obj, socket)
