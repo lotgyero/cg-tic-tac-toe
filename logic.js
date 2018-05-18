@@ -8,9 +8,9 @@ var Math = require('mathjs');
 
 var logger = require('./logger');
 
-var baseNumber = 9;
+const baseNumber = 9;
 
-var PLAYER_TO = 4;
+const PLAYER_TO = 4;
 
 /**
  * Checks whether the small grid square is free or not.
@@ -42,6 +42,10 @@ var getSmallDiff = function(obj) {
     var result = {'X': [], '0': []}
     for(var i = 1; i < obj.turnBuf.length; i++)
     {
+        if(!actionAllowed(obj, obj.turnBuf[i])) {
+            logger.debug('getSmallDiff() not allowed: turnBuf[i] ' + obj.turnBuf[i], 5);
+            continue;
+        }
         if(obj.players['X'].includes(i)) {
             result['X'].push(obj.turnBuf[i]);
         } else {
@@ -253,6 +257,8 @@ var gameModel = {
             'collision': []
         };
 
+        result['changes'] = getSmallDiff(this);
+
         // Set the small grid according with the current turn.
         // Set small square to an empty value, in case of collision.
         for(i = 1; i < this.turnBuf.length; i++) {
@@ -263,6 +269,7 @@ var gameModel = {
             // the square had been taken or out of the game field
             if(!actionAllowed(this, this.turnBuf[i])) {
                 logger.debug('endTurn(): used square hit ' + this.turnBuf[i], 4);
+                this.turnBuf[i] = 0;
                 continue;
             }
             var collisionPlayerId = isTurnCollision(this, this.turnBuf[i], i);
@@ -290,7 +297,7 @@ var gameModel = {
         result['small'] = this.checkSmall();
         result['big'] = this.checkBig(result);
         result['winner'] = this.checkWinner(result['big']);
-        result['changes'] = getSmallDiff(this);
+
         this.turnBuf = [ 0, 0, 0, 0, 0, 0, 0];
         this.winner = result['winner'];
         return result;
@@ -298,7 +305,6 @@ var gameModel = {
     // { 'X': [1,2], '0': [3] }
     checkWinner: function(changes) {
         var winner = [];
-        var id;
         var i;
         var rows;
         var dummyGame = {'small': this.big};
@@ -306,6 +312,7 @@ var gameModel = {
         for (var symbol of ['X','0']) {
             for(i = 0; i < changes[symbol].length; i++) {
                 rows = checkRows(dummyGame, changes[symbol][i], symbol);
+                logger.debug('checkRows() rows: ' + rows, 5);
                 if(rows.length == 3)
                     winner.push(symbol);
             }
@@ -313,10 +320,12 @@ var gameModel = {
 
         if (winner.length == 0)
             return false;
-        else if (winner.length == 1)
-            return winner[0];
-        else if (winner.length == 2)
+        else if (winner.indexOf('X') != -1 && winner.indexOf('0') != -1)
             return 'draw';
+        else if (winner.indexOf('X') != -1)
+            return 'X';
+        else if (winner.indexOf('0') != -1)
+            return '0';
     },
     checkBig: function(input) {
         var result = {'X': [], '0': []};
@@ -407,6 +416,7 @@ var gameModel = {
     resetState: function() {
         this.big = ['E', 'E', 'E', 'E', 'E', 'E', 'E', 'E','E', 'E'];
         this.small = {};
+        this.winner = false;
         this.dependencies = { 1: 2, 2: 3, 3:1, 4:5, 5:6, 6:4 };
         this.turnBuf = [ 0, 0, 0, 0, 0, 0, 0];
         this.playerPokeArea = [ 0, 0, 0, 0, 0, 0, 0];

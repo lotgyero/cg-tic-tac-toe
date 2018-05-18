@@ -32,12 +32,20 @@ Check small world total singular collision
 Check big check functions
     ${result} =    Run Process    node ./tests/test_checkturn.js 3   shell=True    cwd=./
     Should Not Contain  ${result.stdout}    big: [ 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E' ],
-    Should Contain  ${result.stdout}    changes: { '0': [ 70, 80, 63 ], X: [ 11, 20, 12 ] },
     Should Contain  ${result.stdout}    big: { '0': [], X: [ 2 ] }
     Should Contain  ${result.stdout}    big: [ 'E', 'E', 'X', 'E', 'E', 'E', 'E', 'E', 'E', 'E' ],
 
-Check won check functions
+Check semi-win check functions
     ${result} =    Run Process    node ./tests/test_checkturn.js 13   shell=True    cwd=./
+    Should Not Contain  ${result.stdout}    big: { '0': [], X: [ 1 ] },
+    Should Not Contain  ${result.stdout}    big: { '0': [], X: [ 2 ] },
+    Should Not Contain  ${result.stdout}    big: { '0': [], X: [ 3 ] },
+    Should Not Contain  ${result.stdout}    big: { '0': [ 5 ], X: [ 1 ] }
+    Should Not Contain  ${result.stdout}    big: [ 'E', 'X', 'X', 'X', 'E', 'E', 'E', 'E', 'E', 'E' ],
+    Should Not Contain  ${result.stdout}    winner: 'X'
+
+Check won check functions
+    ${result} =    Run Process    node ./tests/test_checkturn.js 113   shell=True    cwd=./
     Should Contain  ${result.stdout}    big: { '0': [], X: [ 1 ] },
     Should Contain  ${result.stdout}    big: { '0': [], X: [ 2 ] },
     Should Contain  ${result.stdout}    big: { '0': [], X: [ 3 ] },
@@ -57,6 +65,6 @@ Check player status functions
     ${result} =    Run Process    node ./tests/test_checkturn.js 9   shell=True    cwd=./
     Should Contain  ${result.stdout}    state: 'in progress'
     Should Contain  ${result.stdout}    usedSlots: [ 1, 2, 3, 4 ]
-    Should Contain  ${result.stdout}    playerPokeArea: [ 0, 0, 0, 0, 0, 1, 1 ],
-    Should Contain  ${result.stdout}    playerPokeArea: [ 0, 0, 0, 0, 0, 2, 2 ],
+    Should Contain  ${result.stdout}    2, 2 ],
+    Should Contain  ${result.stdout}    3, 3 ],
     Should Contain  ${result.stdout}    disconnected players 5,6

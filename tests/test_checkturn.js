@@ -89,7 +89,55 @@ switch (process.argv[2]){
 
         socket.emit('print');
         break;
-    case '13': // X won
+    case '13': // X semi-win
+        timeout = 5000;
+        socket.emit('reset');
+        addPlayers(6);
+        socket.emit('turn', {playerid: 1, squareid: 6});
+        socket.emit('turn', {playerid: 2, squareid: 4});
+        socket.emit('turn', {playerid: 3, squareid: 9});
+        socket.emit('turn', {playerid: 4, squareid: 4});
+        socket.emit('turn', {playerid: 5, squareid: 5});
+        socket.emit('turn', {playerid: 6, squareid: 6});
+        socket.emit('print');
+        console.log('case 13: after 1st turn ');
+        function f13() {
+            socket.emit('turn', {playerid: 6, squareid: 9});
+            socket.emit('turn', {playerid: 5, squareid: 8});
+            socket.emit('turn', {playerid: 4, squareid: 7});
+            socket.emit('turn', {playerid: 3, squareid: 4});
+            socket.emit('turn', {playerid: 2, squareid: 6});
+            socket.emit('turn', {playerid: 1, squareid: 3});
+            console.log('case 13: after 2nd turn ');
+            socket.emit('print');
+        }
+        function f23() {
+            socket.emit('turn', {playerid: 1, squareid: 2});
+            socket.emit('turn', {playerid: 2, squareid: 5});
+            socket.emit('turn', {playerid: 3, squareid: 4});
+            socket.emit('turn', {playerid: 4, squareid: 4});
+            socket.emit('turn', {playerid: 5, squareid: 6});
+            socket.emit('turn', {playerid: 6, squareid: 3});
+            console.log('case 13: after 3d turn ');
+            socket.emit('print');
+        }
+        function f33() {
+            socket.emit('turn', {playerid: 1, squareid: 4});
+            socket.emit('turn', {playerid: 2, squareid: 5});
+            socket.emit('turn', {playerid: 3, squareid: 4});
+            socket.emit('turn', {playerid: 4, squareid: 2});
+            socket.emit('turn', {playerid: 5, squareid: 5});
+            socket.emit('turn', {playerid: 6, squareid: 3});
+            socket.emit('print');
+            console.log('case 13: after 4th turn ');
+        }
+        setTimeout(f13, 1000);
+        setTimeout(f23, 2000);
+        setTimeout(f33, 3000);
+
+        break;
+    case '113': // X won
+        timeout = 5000;
         socket.emit('reset');
         addPlayers(6);
         socket.emit('turn', {playerid: 1, squareid: 1});
@@ -98,29 +146,42 @@ switch (process.argv[2]){
         socket.emit('turn', {playerid: 4, squareid: 4});
         socket.emit('turn', {playerid: 5, squareid: 5});
         socket.emit('turn', {playerid: 6, squareid: 6});
-
-        socket.emit('turn', {playerid: 6, squareid: 9});
-        socket.emit('turn', {playerid: 5, squareid: 8});
-        socket.emit('turn', {playerid: 4, squareid: 7});
-        socket.emit('turn', {playerid: 3, squareid: 3});
-        socket.emit('turn', {playerid: 2, squareid: 2});
-        socket.emit('turn', {playerid: 1, squareid: 2});
-
-        socket.emit('turn', {playerid: 1, squareid: 2});
-        socket.emit('turn', {playerid: 2, squareid: 1});
-        socket.emit('turn', {playerid: 3, squareid: 1});
-        socket.emit('turn', {playerid: 4, squareid: 3});
-        socket.emit('turn', {playerid: 5, squareid: 5});
-        socket.emit('turn', {playerid: 6, squareid: 1});
-
-        socket.emit('turn', {playerid: 1, squareid: 1});
-        socket.emit('turn', {playerid: 2, squareid: 3});
-        socket.emit('turn', {playerid: 3, squareid: 3});
-        socket.emit('turn', {playerid: 4, squareid: 2});
-        socket.emit('turn', {playerid: 5, squareid: 5});
-        socket.emit('turn', {playerid: 6, squareid: 2});
-
         socket.emit('print');
+        console.log('case 113: after 1st turn ');
+        function f1() {
+            socket.emit('turn', {playerid: 6, squareid: 9});
+            socket.emit('turn', {playerid: 5, squareid: 8});
+            socket.emit('turn', {playerid: 4, squareid: 7});
+            socket.emit('turn', {playerid: 3, squareid: 3});
+            socket.emit('turn', {playerid: 2, squareid: 2});
+            socket.emit('turn', {playerid: 1, squareid: 2});
+            console.log('case 113: after 2nd turn ');
+            socket.emit('print');
+        }
+        function f2() {
+            socket.emit('turn', {playerid: 1, squareid: 2});
+            socket.emit('turn', {playerid: 2, squareid: 1});
+            socket.emit('turn', {playerid: 3, squareid: 1});
+            socket.emit('turn', {playerid: 4, squareid: 4});
+            socket.emit('turn', {playerid: 5, squareid: 5});
+            socket.emit('turn', {playerid: 6, squareid: 2});
+            console.log('case 113: after 3d turn ');
+            socket.emit('print');
+        }
+        function f3() {
+            socket.emit('turn', {playerid: 1, squareid: 1});
+            socket.emit('turn', {playerid: 2, squareid: 3});
+            socket.emit('turn', {playerid: 3, squareid: 3});
+            socket.emit('turn', {playerid: 4, squareid: 2});
+            socket.emit('turn', {playerid: 5, squareid: 5});
+            socket.emit('turn', {playerid: 6, squareid: 2});
+            socket.emit('print');
+            console.log('case 113: after 4th turn ');
+        }
+        setTimeout(f1, 1000);
+        setTimeout(f2, 2000);
+        setTimeout(f3, 3000);
+
         break;
 
     case '4': // draw conditions test
