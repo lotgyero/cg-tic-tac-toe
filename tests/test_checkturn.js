@@ -7,6 +7,7 @@ socket.on('printOut', function (data) {
 
 socket.on('turn ends', function (data) {
     console.log(data);
+    console.log(data.small['X']);
 });
 
 socket.on('player action', function(msg) {

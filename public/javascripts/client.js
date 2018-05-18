@@ -12,7 +12,7 @@ if (prevTurnSqrs.length == 0) {
 
 var logger = {
     debug: function(msg, id) {
-        if(id == 4)
+        if(id == 5)
             console.log(msg);
     }
 };
@@ -122,6 +122,13 @@ var updateOnTurnEnds = function(msg) {
     var i = 0;
     var el;
     var updPrevTurnSqrs = [];
+
+    // toggle collision class
+    for(el of prevTurnSqrs){
+        if($('#sq'+el).hasClass('collision'))
+            $('#sq'+el).toggleClass('collision');
+    }
+
     // Updating small squares
     for(el of msg['changes']['X']) {
         //console.log('updateOnTurnEnds() X:' + el);
@@ -134,13 +141,17 @@ var updateOnTurnEnds = function(msg) {
         updPrevTurnSqrs.push(el);
     }
     // Updating taken lines of small squares
-    for(el of msg['small']['X']) {
-        //console.log('updateOnTurnEnds() 0:' + el);
-        $('#sq'+el).css('text-decoration','line-through white');
+    for(line of msg['small']['X']) {
+        //logger.debug(el, 5);
+        for(el of line) {
+            $('#sq'+el).css('text-decoration','line-through white');
+        }
     }
-    for(el of msg['small']['0']) {
+    for(line of msg['small']['0']) {
         //console.log('updateOnTurnEnds() 0:' + el);
-        $('#sq'+el).css('text-decoration','line-through white');
+        for(el of line) {
+            $('#sq'+el).css('text-decoration','line-through white');
+        }
     }
 
     // Toggle the collision class for a last turn collision.
