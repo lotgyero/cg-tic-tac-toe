@@ -41,7 +41,8 @@ io.on('connection', function (socket) {
 
   socket.on('turn_up', function(data) {
     logger.debug('incTurn()');
-    gameModel.incTurn(); });
+    gameModel.incTurn();
+  });
 
   socket.on('print', function () {
     socket.emit('printOut', gameModel);
@@ -57,23 +58,24 @@ io.on('connection', function (socket) {
     if(result.hasOwnProperty('begin') && result['begin'] === true) {
         logger.debug(result,4);
         logger.debug('the game has begun',4);
-        io.sockets.emit('game starts', {'begin': true});
+        setTimeout(function() {
+            io.sockets.emit('game starts', {'begin': true});
+        }, 1000);
     }
   });
 
   socket.on('turn', function(data) {
-      if (typeof msg != 'undefined') {
-      logger.debug(data, 3);
-      var msg = gameModel.turn(data);
-          logger.debug(msg, 3);
+    if(typeof data != 'undefined' && gameModel.playerAllowed(data)) {
+        var msg = gameModel.turn(data);
+        if (typeof msg != 'undefined') {
+          logger.debug(data, 4);
+          logger.debug(msg, 4);
           io.sockets.emit('turn ends', msg);
-      } else {
-        if (gameModel.actionAllowed(data)) {
-          io.sockets.emit('player action', { 'playerid': data.playerid });
-          logger.debug('Action was allowed.', 4);
+        } else {
+            io.sockets.emit('player action', { 'playerid': data.playerid });
+            logger.debug('Action was allowed.', 4);
         }
       }
-
   });
 
   socket.on('get state', function () {
@@ -86,9 +88,9 @@ io.on('connection', function (socket) {
     gameModel.resetState();
   });
 
-  socket.on('start', function() {
-      gameModel.start();
-  });
+  //socket.on('start', function() {
+  //    gameModel.start();
+  //});
 
   socket.on('alive', function(msg) {
     gameModel.playerAlive(msg);

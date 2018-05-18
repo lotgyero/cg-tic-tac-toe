@@ -15,8 +15,9 @@ var PLAYER_TO = 4;
 /**
  * Checks whether the small grid square is free or not.
  */
-var checkAction = function(obj, squareId) {
-    if(obj.small[squareId] == 'X' || obj.small[squareId] == '0')
+var actionAllowed = function(obj, squareId) {
+    if(obj.small[squareId] == 'X' || obj.small[squareId] == '0'
+    || squareId < 1 || squareId > 81)
         return false;
     return true;
 }
@@ -182,12 +183,12 @@ var gameModel = {
         } /*else if (!checkAction(this, squareId)) {
             logger.info('gameModel.turn(): wrong action - the square has been used.');
         }*/ else {
-            if (!checkAction(this, squareId)) {
-                logger.info('gameModel.turn(): wrong action - the square has been used.');
-                this.turnBuf[playerId] = -1;
-            } else {
+            //if (!checkAction(this, squareId)) {
+            //    logger.info('gameModel.turn(): wrong action - the square has been used.');
+            //    this.turnBuf[playerId] = -1;
+            //} else {
                 this.turnBuf[playerId] = squareId;
-            }
+            //}
             var result = this.endTurn();
             logger.info('gameModel.turn() ' + result['changes']);
             // TODO could be an empty object, if all players collide with each other
@@ -257,6 +258,11 @@ var gameModel = {
         for(i = 1; i < this.turnBuf.length; i++) {
             // this is the pair with already processed collision
             if(this.turnBuf[i] === 0) {
+                continue;
+            }
+            // the square had been taken or out of the game field
+            if(!actionAllowed(this, this.turnBuf[i])) {
+                logger.debug('endTurn(): used square hit ' + this.turnBuf[i], 4);
                 continue;
             }
             var collisionPlayerId = isTurnCollision(this, this.turnBuf[i], i);
@@ -408,7 +414,7 @@ var gameModel = {
         this.usedSlots = [];
         this.state = 'stopped';
     },
-    actionAllowed: function(obj) {
+    playerAllowed: function(obj) {
         //logger.debug(obj,4);
         if ( this.state == 'in progress'
             && obj.hasOwnProperty('playerid')
@@ -421,6 +427,7 @@ var gameModel = {
         return false;
     },
     playerAlive: function(msg) {
+        logger.debug('playerAlive(): playerid ' + msg.playerid ,4);
         this.playerPokeArea[msg.playerid] = 0;
     },
     pokePlayers: function() {
@@ -429,11 +436,13 @@ var gameModel = {
             return pokePlayersArray;
 
         for (var i = 1; i < this.playerPokeArea.length; i++) {
-            if(this.usedSlots.includes(i)) {
+            logger.debug('pokePlayers(): i ' + i,4);
+            if(this.usedSlots.includes(i) === true) {
                 this.playerPokeArea[i] += 1;
             }
-            logger.debug(this.playerPokeArea[i],4);
-            if(this.playerPokeArea[i] >= PLAYER_TO && this.usedSlots.includes(i)) {
+            logger.debug('pokePlayers(): playerPokeArea[i] ' + this.playerPokeArea[i],4);
+            if(this.playerPokeArea[i] >= PLAYER_TO && this.usedSlots.includes(i) === true) {
+                logger.debug('pokePlayers(): TO ' + this.playerPokeArea[i],4);
                 pokePlayersArray.push(i);
                 this.playerPokeArea[i] = 0;
             }

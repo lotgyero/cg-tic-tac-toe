@@ -17,43 +17,41 @@ var logger = {
     }
 };
 
-io.on('connection', function (socket) {
-    // Socket events processing
-    socket.on('current state', function(msg) {
-        logger.debug('Asking for a state', 1);
-        setCurrentState(msg);
-    });
+// Socket events processing
+socket.on('current state', function(msg) {
+    logger.debug('Asking for a state', 1);
+    setCurrentState(msg);
+});
 
-    socket.on('turn ends', function(msg) {
-        logger.debug(msg,2);
-        updateOnTurnEnds(msg);
-    });
+socket.on('turn ends', function(msg) {
+    logger.debug(msg,2);
+    updateOnTurnEnds(msg);
+});
 
-    socket.on('player action', function(msg) {
-        logger.debug(msg,2);
-        $('#pstatus' + msg.playerid).css('font-weight', '900');
-    });
+socket.on('player action', function(msg) {
+    logger.debug(msg,2);
+    $('#pstatus' + msg.playerid).css('font-weight', '900');
+});
 
-    socket.on('game starts', function(msg) {
-        //TODO show modal
-        logger.debug('game starts',3);
-        turnAllowed = true;
-    });
+socket.on('game starts', function(msg) {
+    //TODO show modal
+    logger.debug('game starts',3);
+    turnAllowed = true;
+});
 
-    socket.on('check', function() {
-        logger.debug('check event', 3);
-        socket.emit('alive', {'playerid': playerid});
-    });
+socket.on('check', function() {
+    logger.debug('check event', 3);
+    socket.emit('alive', {'playerid': playerid});
+});
 
-    socket.on('disconnected players', function(msg) {
-        logger.debug('disconnected players ' + msg.zombie);
-        disconnectPlayers(msg);
-    });
+socket.on('disconnected players', function(msg) {
+    logger.debug('disconnected players ' + msg.zombie);
+    disconnectPlayers(msg);
+});
 
-    socket.on('player online', function(msg) {
-        logger.debug('player online' + msg.playerid);
-        connectPlayer(msg);
-    });
+socket.on('player online', function(msg) {
+    logger.debug('player online' + msg.playerid);
+    connectPlayer(msg);
 });
 
 socket.emit('get state');
@@ -79,6 +77,9 @@ var setCurrentState = function(obj) {
             $('#win-placeholder').text('Игра завершена. Победили ' + obj.winner);
         }
         turnAllowed = false;
+    }
+    else {
+        turnAllowed = true;
     }
 
     players = obj.players;
