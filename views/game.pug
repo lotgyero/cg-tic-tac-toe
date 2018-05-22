@@ -16,9 +16,12 @@ html
   body
       div.row
         div.col-xs-12.text-center.header
-         h1(id='win-placeholder') Играем в #{title}
-         //div.container(data-toggle="modal" data-target="#turnModal")
-         div.container(onclick='showTurnField();')
+          h1(id='win-placeholder') Играем в #{title}
+      div.row
+        div.col-xs-12.text-center.header
+          h1(id='gamestate-placeholder') Ожидаем игроков
+          //div.container(data-toggle="modal" data-target="#turnModal")
+        div.container(onclick='showTurnField();')
             div.row.text-center
               div.col-md-2
                 p Зависимости
@@ -187,7 +190,7 @@ html
                     div.col-md-4.col-xs-4.square-small(id='sq80')
                     div.col-md-4.col-xs-4.square-small(id='sq81')
 
-         div.modal.fade(id="turnModal" tabindex="-1" role="dialog" aria-labelledby="turnModalLabel" aria-hidden="true")
+        div.modal.fade(id="turnModal" tabindex="-1" role="dialog" aria-labelledby="turnModalLabel" aria-hidden="true")
            div.modal-dialog.modal-dialog-centered(role="document")
              div.modal-content
                div.modal-header

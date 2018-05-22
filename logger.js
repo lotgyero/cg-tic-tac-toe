@@ -1,6 +1,7 @@
+//TODO introduce logging levels in config
 var logger = {
     debug: function (msg, id) {
-        if(id == 6)
+        if(id == 9)
             console.log(msg);
     },
     info: function (msg) {

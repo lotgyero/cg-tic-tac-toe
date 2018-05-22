@@ -66,5 +66,4 @@ Check player status functions
     Should Contain  ${result.stdout}    state: 'in progress'
     Should Contain  ${result.stdout}    usedSlots: [ 1, 2, 3, 4 ]
     Should Contain  ${result.stdout}    2, 2 ],
-    Should Contain  ${result.stdout}    3, 3 ],
     Should Contain  ${result.stdout}    disconnected players 5,6
