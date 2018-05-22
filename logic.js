@@ -378,11 +378,19 @@ var gameModel = {
         return result;
     },
     getCurrentState: function () {
+        var players_done = [];
+        for(var i =1; i < this.turnBuf.length; i ++) {
+            if(this.turnBuf[i] > 0)
+                players_done.push(i);
+        }
         return {'small': this.small,
                 'big': this.big,
                 'winner': this.winner,
                 'players': this.players,
-                'playerPokeArea': this.playerPokeArea
+                'playerPokeArea': this.playerPokeArea,
+                'players_done': players_done,
+                'state': this.state,
+                'used_slots': this.usedSlots
         };
     },
     ping: function() {

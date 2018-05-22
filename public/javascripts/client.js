@@ -20,6 +20,7 @@ var logger = {
 // Socket events processing
 socket.on('current state', function(msg) {
     logger.debug('Asking for a state', 1);
+    logger.debug(msg, 5);
     setCurrentState(msg);
 });
 
@@ -59,8 +60,29 @@ socket.emit('get state');
 var setCurrentState = function(obj) {
     var k;
     //logger.debug(obj['small'], 1);
-    if(obj['state'] == true)
+    //if(obj['state'] == true)
+    //    turnAllowed = true;
+
+    if(obj.hasOwnProperty('players_done') &&
+        !obj['players_done'].includes(Number(playerid))) {
         turnAllowed = true;
+        $('#pstatus'+playerid).css('color', 'black');
+        //for (k of obj.players_done)
+        //    $('#pstatus'+k).css('font-weight', 'normal');
+            //if(!obj.used_slots.includes(k))
+            //    $('#pstatus'+k).css('color', 'red');
+            //else
+    } else if(obj.hasOwnProperty('players_done') &&
+        obj['players_done'].includes(Number(playerid))) {
+        logger.debug('change pstatus font weight', 5);
+        $('#pstatus'+playerid).css('color', 'black');
+        $('#pstatus'+playerid).css('font-weight', '900');
+
+    }
+
+    logger.debug(obj.hasOwnProperty('players_done'),5);
+    logger.debug(obj['players_done'].includes(playerid),5);
+
 
     for (k in obj.small) {
         //logger.debug('setCurrentState(): ' + k, 1);
@@ -79,7 +101,7 @@ var setCurrentState = function(obj) {
         turnAllowed = false;
     }
     else {
-        turnAllowed = true;
+        //turnAllowed = true;
     }
 
     players = obj.players;
