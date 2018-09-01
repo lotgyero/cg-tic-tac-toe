@@ -71,6 +71,25 @@ switch (process.argv[2]){
         socket.emit('print');
         break;
 
+    case '112': // dependency change on collision
+        socket.emit('reset');
+        socket.emit('print');
+        addPlayers(6);
+        socket.emit('turn', {playerid: 1, squareid: 1});
+        socket.emit('turn', {playerid: 2, squareid: 2});
+        socket.emit('turn', {playerid: 3, squareid: 3});
+        socket.emit('turn', {playerid: 4, squareid: 1});
+        socket.emit('turn', {playerid: 5, squareid: 2});
+        socket.emit('turn', {playerid: 6, squareid: 4});
+        socket.emit('turn', {playerid: 1, squareid: 5});
+        socket.emit('turn', {playerid: 2, squareid: 4});
+        socket.emit('turn', {playerid: 3, squareid: 3});
+        socket.emit('turn', {playerid: 4, squareid: 6});
+        socket.emit('turn', {playerid: 5, squareid: 7});
+        socket.emit('turn', {playerid: 6, squareid: 8});
+        socket.emit('print');
+        break;
+
     case '3': // 2nd quadrant is taken by X
         socket.emit('reset');
         addPlayers(6);

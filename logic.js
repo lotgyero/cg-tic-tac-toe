@@ -1,16 +1,14 @@
 /*
 * Game logic.
-*
-*
 */
 
 var Math = require('mathjs');
 
 var logger = require('./logger');
 
-const baseNumber = 9;
+const baseNumber = 9; // Number of small squares in a big one
 
-const PLAYER_TO = 4;
+const PLAYER_TO = 4; // User online check timeout PLAYER_TO * 10 secs
 
 /**
  * Checks whether the small grid square is free or not.
@@ -38,6 +36,9 @@ var isTurnCollision = function(obj, squareId, playerId) {
     return 0;
 }
 
+/**
+ * Produces lines with small squares, taken by the teams.
+ */
 var getSmallDiff = function(obj) {
     var result = {'X': [], '0': []}
     for(var i = 1; i < obj.turnBuf.length; i++)
@@ -52,26 +53,28 @@ var getSmallDiff = function(obj) {
             result['0'].push(obj.turnBuf[i]);
         }
     }
-    logger.debug('getSmallDiff() X:',1);
-    logger.debug(result['X'],1);
-    logger.debug('getSmallDiff() 0:',1);
-    logger.debug(result['0'],1);
+    logger.debug('getSmallDiff() X:');
+    logger.debug(result['X']);
+    logger.debug('getSmallDiff() 0:');
+    logger.debug(result['0']);
     return result;
 }
 
+/**
+ * Produces lines with small squares, taken by the teams.
+ */
 var getBigId = function(line) {
     return Math.fix(line[0] / 9) + 1;
 }
 
+/**
+ * Utility f() that is used to output changes with the turn ends.
+ */
 var printChanges = function(result) {
     logger.debug('printChanges(): result small ' + result.small);
     logger.debug('printChanges(): result big ' + result.big);
     logger.debug('printChanges(): result won ' + result.won);
     logger.debug('printChanges(): result changes ' + result.changes);
-}
-
-var checkBigRows = function (obj, bigSquareId,symbol) {
-    return false;
 }
 
 /**
@@ -152,6 +155,10 @@ var checkRows = function(obj, squareId, symbol) {
     return [];
 }
 
+var randomIntInc = function(low, high) {
+  return Math.floor(Math.random() * (high - low + 1) + low)
+}
+
 
 /**
  * Main game model.
@@ -160,17 +167,17 @@ var gameModel = {
     state : 'stopped', // game current state
     turnCounter: 1, // turn counter
     players : { 'X': [1, 2, 3], '0': [ 4, 5, 6 ]}, // players' ids
-    usedSlots: [],
+    usedSlots: [], // Player ids used
     big : ['E', 'E', 'E', 'E', 'E', 'E', 'E', 'E','E', 'E'], // left to right, top to bottom
     small : {}, // left to right, top to bottom, inside big square, then the next one
-    dependencies: { 1: 2, 2: 3, 3:1, 4:5, 5:6, 6:4 },
+    dependencies: { 1: 2, 2: 3, 3: 1, 4: 5, 5: 6, 6: 4 }, // Player actions inter-dependencies
     turnBuf : [ 0, 0, 0, 0, 0, 0, 0], // current turn actions
     playerPokeArea : [ 0, 0, 0, 0, 0, 0, 0], // check player online using the structure
-    winner: false,
+    winner: false, // winner flag|info
     start: function() {
         this.state = 'in progress';
     },
-    turn: function(data) {
+    turn: function(data) { // Fires when the player sends an action msg
         // Check for values
         var playerId = data.playerid;
         var squareId = data.squareid;
@@ -184,15 +191,8 @@ var gameModel = {
             logger.info('gameModel.turn(): this turn action has been already taken.');
         } else if ( squareId < 1 || squareId > 81 ) {
             logger.debug('gameModel.turn(): wrong square-id.');
-        } /*else if (!checkAction(this, squareId)) {
-            logger.info('gameModel.turn(): wrong action - the square has been used.');
-        }*/ else {
-            //if (!checkAction(this, squareId)) {
-            //    logger.info('gameModel.turn(): wrong action - the square has been used.');
-            //    this.turnBuf[playerId] = -1;
-            //} else {
-                this.turnBuf[playerId] = squareId;
-            //}
+        } else {
+            this.turnBuf[playerId] = squareId;
             var result = this.endTurn();
             logger.info('gameModel.turn() ' + result['changes']);
             // TODO could be an empty object, if all players collide with each other
@@ -203,7 +203,7 @@ var gameModel = {
             }
         }
     },
-    print: function() {
+    print: function() { // utility
         logger.debug('state '+ this.state);
         logger.debug('turn '+ this.turnCounter);
         logger.debug('big '+ this.big);
@@ -214,7 +214,7 @@ var gameModel = {
         logger.debug(s);
         logger.debug('turn_buf '+ this.turnBuf);
     },
-    useDependencies: function()
+    useDependencies: function() // calculate the actual square ids using dependencies
     {
         var temp = [0];
         var bigSquareId;
@@ -230,25 +230,40 @@ var gameModel = {
         logger.debug(temp, 3);
         this.turnBuf = temp;
     },
-    endTurn: function()
+    changeDependencies: function () // Change dependency matrix on collision
     {
-        for(var i = 1; i < this.turnBuf.length; i++) {
-            if (this.turnBuf[i] === 0) {
-                return {};
+        var userIds;
+        for(var elem in this.players)
+        {
+            userIds = Array.from(this.players[elem]);
+            var randId;
+            //logger.debug(userIds,9);
+            //logger.debug(elem,9);
+            for(var el=0; el < this.players[elem].length; el++)
+            {
+                randId = Math.floor(Math.random() * userIds.length);
+                randValue = userIds[randId];
+                this.dependencies[this.players[elem][el]] = randValue;
+                userIds.splice(randId, 1);
+                //logger.debug(randId,9);
+                //logger.debug(userIds,9);
             }
         }
-
+        logger.debug("changeDependencies()");
+        //logger.debug(this.dependencies, 9);
+    },
+    endTurn: function() // fires when the turn ends
+    // TODO refactor to make it smaller
+    {
+        //logger.debug("hit endTurn()", 9);
         // The square has been already used in  one of the previous turns.
         for(var i = 1; i < this.turnBuf.length; i++) {
             if (this.turnBuf[i] === 0) {
                 return {};
             }
         }
-
         // Calculate the actual square ids and put them into the current turnBuf.
         this.useDependencies();
-        // logger.debug(this);
-
         // The game sends its changes to clients using the structure
         var result = {'small': [],
             'big': [],
@@ -256,9 +271,7 @@ var gameModel = {
             'changes': [],
             'collision': []
         };
-
         result['changes'] = getSmallDiff(this);
-
         // Set the small grid according with the current turn.
         // Set small square to an empty value, in case of collision.
         for(i = 1; i < this.turnBuf.length; i++) {
@@ -293,6 +306,9 @@ var gameModel = {
             }
         }
         this.turnCounter += 1;
+        if (result.collision.length >= 1){
+            this.changeDependencies();
+        }
 
         result['small'] = this.checkSmall();
         result['big'] = this.checkBig(result);
@@ -302,8 +318,7 @@ var gameModel = {
         this.winner = result['winner'];
         return result;
     },
-    // { 'X': [1,2], '0': [3] }
-    checkWinner: function(changes) {
+    checkWinner: function(changes) { // Check for win conditions
         var winner = [];
         var i;
         var rows;
@@ -327,18 +342,12 @@ var gameModel = {
         else if (winner.indexOf('0') != -1)
             return '0';
     },
-    checkBig: function(input) {
+    checkBig: function(input) { // Check for a big line set
         var result = {'X': [], '0': []};
         var bigId;
         var line = [];
 
-        //for (var k in input['small']) {
-        //    logger.info(input['small'][k]);
-        //}
-
-        //logger.info('checkBig(): ' + input['small']);
         for(key in input['small']['X']) {
-            //logger.info(input['small']['X'][key]);
             bigId = getBigId(input['small']['X'][key]);
             if(this.big[bigId] == 'E') {
                 result['X'].push(bigId);
@@ -355,7 +364,7 @@ var gameModel = {
         }
         return result;
     },
-    checkSmall: function() {
+    checkSmall: function() { // Check for a small line set
         var result = {'X': [], '0': []};
         logger.debug('gameModel.checkSmall(): enter');
         for(var i = 1; i < this.turnBuf.length; i++) {
@@ -377,7 +386,7 @@ var gameModel = {
         }
         return result;
     },
-    getCurrentState: function () {
+    getCurrentState: function () { // Returns current game status for a player
         var players_done = [];
         for(var i =1; i < this.turnBuf.length; i ++) {
             if(this.turnBuf[i] > 0)
@@ -393,14 +402,10 @@ var gameModel = {
                 'used_slots': this.usedSlots
         };
     },
-    ping: function() {
+    ping: function() { // TODO remove this
         return {state: this.state, turn: this.turnCounter};
     },
-    incTurn: function() {
-        this.turnCounter += 1;
-
-    },
-    getPlayerId: function(obj) {
+    getPlayerId: function(obj) { // Fires when player connects and begins the game if full set.
         var result = {'playerid': 0};
         if(typeof obj.faction != 'undefined'
             && (obj.faction == 'X' || obj.faction == '0')) {
@@ -421,7 +426,7 @@ var gameModel = {
         }
         return result;
     },
-    resetState: function() {
+    resetState: function() { // reset the game state on restart and while testing.
         this.big = ['E', 'E', 'E', 'E', 'E', 'E', 'E', 'E','E', 'E'];
         this.small = {};
         this.winner = false;
@@ -432,8 +437,7 @@ var gameModel = {
         this.usedSlots = [];
         this.state = 'stopped';
     },
-    playerAllowed: function(obj) {
-        //logger.debug(obj,4);
+    playerAllowed: function(obj) { // Player id sanity checks
         if ( this.state == 'in progress'
             && obj.hasOwnProperty('playerid')
             && obj.playerid >= 1
@@ -444,11 +448,11 @@ var gameModel = {
         }
         return false;
     },
-    playerAlive: function(msg) {
+    playerAlive: function(msg) { // Reset the playerPokeArea counters if the player answers the check.
         logger.debug('playerAlive(): playerid ' + msg.playerid ,4);
         this.playerPokeArea[msg.playerid] = 0;
     },
-    pokePlayers: function() {
+    pokePlayers: function() { // Check for players online status
         var pokePlayersArray = [];
         if(!this.isStarted())
             return pokePlayersArray;
@@ -474,7 +478,7 @@ var gameModel = {
         logger.debug(this.usedSlots, 4);
         return pokePlayersArray;
     },
-    isStarted: function() {
+    isStarted: function() { // Utility
         return this.state == 'in progress'
     }
 }

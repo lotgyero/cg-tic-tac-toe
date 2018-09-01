@@ -3,6 +3,7 @@ var prevTurnSqrs = [];
 var turnAllowed = false;
 var players;
 var playerid;
+var reloadTO = 120000; //msecs
 
 if (prevTurnSqrs.length == 0) {
     //turnAllowed = true;
@@ -198,6 +199,7 @@ var updateOnTurnEnds = function(msg) {
        }
        // Prevents multiply turn modals.
        turnAllowed = false;
+       setTimeout(function() { location.reload(); },reloadTO);
     } else {
        turnAllowed = true;
     }
