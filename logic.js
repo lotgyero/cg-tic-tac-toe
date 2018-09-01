@@ -53,10 +53,8 @@ var getSmallDiff = function(obj) {
             result['0'].push(obj.turnBuf[i]);
         }
     }
-    logger.debug('getSmallDiff() X:');
-    logger.debug(result['X']);
-    logger.debug('getSmallDiff() 0:');
-    logger.debug(result['0']);
+    logger.debug('getSmallDiff() X: ' + JSON.stringify(result['X']));
+    logger.debug('getSmallDiff() 0: ' + JSON.stringify(result['0']));
     return result;
 }
 
@@ -71,10 +69,10 @@ var getBigId = function(line) {
  * Utility f() that is used to output changes with the turn ends.
  */
 var printChanges = function(result) {
-    logger.debug('printChanges(): result small ' + result.small);
-    logger.debug('printChanges(): result big ' + result.big);
-    logger.debug('printChanges(): result won ' + result.won);
-    logger.debug('printChanges(): result changes ' + result.changes);
+    logger.debug('printChanges(): result small ' + JSON.stringify(result.small));
+    logger.debug('printChanges(): result big ' + JSON.stringify(result.big));
+    logger.debug('printChanges(): result won ' + JSON.stringify(result.won));
+    logger.debug('printChanges(): result changes ' + JSON.stringify(result.changes));
 }
 
 /**
@@ -186,15 +184,15 @@ var gameModel = {
         }
 
         if ( this.turnBuf[playerId] != 0 ) {
-            logger.debug(data, playerId, squareId);
-            logger.debug(this.turnBuf);
+            //logger.debug(data, playerId, squareId);
+            //logger.debug(this.turnBuf);
             logger.info('gameModel.turn(): this turn action has been already taken.');
         } else if ( squareId < 1 || squareId > 81 ) {
             logger.debug('gameModel.turn(): wrong square-id.');
         } else {
             this.turnBuf[playerId] = squareId;
             var result = this.endTurn();
-            logger.info('gameModel.turn() ' + result['changes']);
+            logger.info('gameModel.turn() ' + JSON.stringify(result['changes']));
             // TODO could be an empty object, if all players collide with each other
             if (typeof result['changes'] != 'undefined') {
                 logger.debug('gameModel.turn(): the end of the ' + this.turnCounter);
@@ -225,9 +223,9 @@ var gameModel = {
             }
             bigSquareId = this.turnBuf[this.dependencies[i]];
             temp.push(baseNumber * (bigSquareId - 1) + this.turnBuf[i]);
-            logger.debug(bigSquareId);
+            //logger.debug(bigSquareId);
         }
-        logger.debug(temp, 3);
+        //logger.debug(temp, 3);
         this.turnBuf = temp;
     },
     changeDependencies: function () // Change dependency matrix on collision
@@ -298,11 +296,11 @@ var gameModel = {
             if ( this.players['X'].includes(i) )
             {
                 this.small[this.turnBuf[i]] = 'X';
-                logger.debug("X " + i);
+                //logger.debug("X " + i);
             }
             else {
                 this.small[this.turnBuf[i]] = '0';
-                logger.debug('0 ' + i);
+                //logger.debug('0 ' + i);
             }
         }
         this.turnCounter += 1;
@@ -406,10 +404,10 @@ var gameModel = {
         return {state: this.state, turn: this.turnCounter};
     },
     getPlayerId: function(obj) { // Fires when player connects and begins the game if full set.
+        //logger.debug('getPlayerId():');
         var result = {'playerid': 0};
         if(typeof obj.faction != 'undefined'
-            && (obj.faction == 'X' || obj.faction == '0')) {
-            logger.debug('get player id',3);
+        && (obj.faction == 'X' || obj.faction == '0')) {
             for(var playerid of this.players[obj.faction]) {
                 if(!this.usedSlots.includes(playerid)) {
                     result.playerid = playerid;
@@ -449,7 +447,7 @@ var gameModel = {
         return false;
     },
     playerAlive: function(msg) { // Reset the playerPokeArea counters if the player answers the check.
-        logger.debug('playerAlive(): playerid ' + msg.playerid ,4);
+        //logger.debug('playerAlive(): playerid ' + msg.playerid);
         this.playerPokeArea[msg.playerid] = 0;
     },
     pokePlayers: function() { // Check for players online status
@@ -458,24 +456,18 @@ var gameModel = {
             return pokePlayersArray;
 
         for (var i = 1; i < this.playerPokeArea.length; i++) {
-            logger.debug('pokePlayers(): i ' + i,4);
+            //logger.debug('pokePlayers(): i ' + i,4);
             if(this.usedSlots.includes(i) === true) {
                 this.playerPokeArea[i] += 1;
             }
-            logger.debug('pokePlayers(): playerPokeArea[i] ' + this.playerPokeArea[i],4);
+            //logger.debug('pokePlayers(): playerPokeArea[i] ' + this.playerPokeArea[i],4);
             if(this.playerPokeArea[i] >= PLAYER_TO && this.usedSlots.includes(i) === true) {
-                logger.debug('pokePlayers(): TO ' + this.playerPokeArea[i],4);
+                logger.debug('pokePlayers(): TO ' + this.playerPokeArea[i]);
                 pokePlayersArray.push(i);
                 this.playerPokeArea[i] = 0;
             }
         }
-        logger.debug('pokePlayersArray:', 4);
-        logger.debug(pokePlayersArray,4);
-        logger.debug('usedSlots() before:', 4);
-        logger.debug(this.usedSlots, 4);
         this.usedSlots = this.usedSlots.filter(x => !pokePlayersArray.includes(x));
-        logger.debug('usedSlots() after:', 4);
-        logger.debug(this.usedSlots, 4);
         return pokePlayersArray;
     },
     isStarted: function() { // Utility

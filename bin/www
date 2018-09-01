@@ -49,15 +49,14 @@ io.on('connection', function (socket) {
     * The event fires when a player wants to join the game from the menu.
     */
   socket.on('get player id', function (msg) {
-    logger.debug('get player id',3);
-    logger.debug(msg,3);
+    logger.debug('get player id: ' + JSON.stringify(msg) + ' from: ' + socket.handshake.address);
     //TODO add socket id to the list for auth checks
     var result = gameModel.getPlayerId(msg);
     socket.emit('playerid', result);
     io.sockets.emit('player online', result); // Tell the players he is online
     if(result.hasOwnProperty('begin') && result['begin'] === true) {
-        logger.debug(result,4);
         logger.debug('the game has begun',4);
+        logger.debug(result,4);
         // Delay the game start, since
         // the last player won't process the event properly.
         setTimeout(function() {
@@ -97,6 +96,7 @@ io.on('connection', function (socket) {
     * TODO Make this more secure
     */
   socket.on('reset', function () {
+    logger.err('Got reset request from: ' + socket.handshake.address);
     gameModel.resetState();
   });
 
@@ -116,7 +116,7 @@ var emitCheck = function() {
         io.sockets.emit('disconnected players', {'zombies': zombiePlayers});
     }
     if(gameModel.isStarted()) {
-        logger.debug('check', 4);
+        //logger.debug('check', 4);
         io.sockets.emit('check');
     }
 };
