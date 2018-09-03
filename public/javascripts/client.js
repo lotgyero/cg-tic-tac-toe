@@ -38,7 +38,10 @@ socket.on('player action', function(msg) {
 // The event fires when the game starts.
 socket.on('game starts', function(msg) {
     $('#gamestate-placeholder').html('Игра началась.');
-    logger.debug('game starts',3);
+    // Could delete turn marks at the field of the spectator
+    // if turns comes immediately after the game start.
+    resetGameField(msg['size']);
+    //logger.debug('game starts',5);
     turnAllowed = true;
 });
 
@@ -154,12 +157,12 @@ var updateOnTurnEnds = function(msg) {
 
     // Updating small squares
     for(el of msg['changes']['X']) {
-        //console.log('updateOnTurnEnds() X:' + el);
+        //logger.debug('updateOnTurnEnds() X:' + el, 5);
         $('#sq'+el).html('<span class="small last">X</span>');
         updPrevTurnSqrs.push(el);
     }
     for(el of msg['changes']['0']) {
-        //console.log('updateOnTurnEnds() 0:' + el);
+        //logger.debug('updateOnTurnEnds() 0:' + el, 5);
         $('#sq'+el).html('<span class="small last">0</span>');
         updPrevTurnSqrs.push(el);
     }
@@ -219,7 +222,6 @@ var changeDependencies = function(obj) {
     logger.debug('changeDependencies()', 4);
     if(Object.keys(obj).length == 0)
         return;
-    logger.debug(JSON.stringify(obj), 5);
     var htmlTextX = '<tbody>';
     var htmlText0 = '<tbody>';
     for(el in obj) {
@@ -232,4 +234,14 @@ var changeDependencies = function(obj) {
     htmlText0 += '</tbody>';
     $('#dependsX').html(htmlTextX);
     $('#depends0').html(htmlText0);
+}
+
+var resetGameField = function(size) {
+    //logger.debug('resetGameField1 ' + size, 5);
+    // This reset works for spectator only.
+    if (window.location.href.includes('spectator')) {
+        //logger.debug('resetGameField2 ' + size,5);
+        for(var i = 1; i <= size; i++ )
+            $('#sq'+i).empty();
+    }
 }

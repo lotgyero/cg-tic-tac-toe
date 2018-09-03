@@ -176,6 +176,8 @@ var getPlayerIdRepr = function(id) {
  * Main game model.
  */
 var gameModel = {
+    bigSize: 9,
+    smallSize: 9,
     state : 'stopped', // game current state
     turnCounter: 1, // turn counter
     players : { 'X': [1, 2, 3], '0': [ 4, 5, 6 ]}, // players' ids
@@ -486,6 +488,9 @@ var gameModel = {
     },
     isStarted: function() { // Utility
         return this.state == 'in progress'
+    },
+    getFieldSize: function() { //Utility used for game field size operations.
+        return this.bigSize * this.smallSize;
     }
 }
 

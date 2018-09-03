@@ -60,7 +60,7 @@ io.on('connection', function (socket) {
         // Delay the game start, since
         // the last player won't process the event properly.
         setTimeout(function() {
-            io.sockets.emit('game starts', {'begin': true});
+            io.sockets.emit('game starts', {'begin': true,'size': gameModel.getFieldSize()});
         }, 1000);
     }
   });
