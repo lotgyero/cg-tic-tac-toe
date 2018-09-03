@@ -182,6 +182,9 @@ var updateOnTurnEnds = function(msg) {
         $('#sq'+el).toggleClass('collision');
     }
 
+    // Change dependencies on collision
+    changeDependencies(msg['deps']);
+
     // Change the class for actions taken previously
     for(el of prevTurnSqrs) {
         logger.debug('updateOnTurnEnds():' + el,666);
@@ -210,4 +213,23 @@ var sendTurn = function(obj, socket)
 {
     socket.emit('turn', {'playerid': Number(playerid), 'squareid': Number(obj.id)});
     hideTurnField();
+}
+
+var changeDependencies = function(obj) {
+    logger.debug('changeDependencies()', 4);
+    if(Object.keys(obj).length == 0)
+        return;
+    logger.debug(JSON.stringify(obj), 5);
+    var htmlTextX = '<tbody>';
+    var htmlText0 = '<tbody>';
+    for(el in obj) {
+        if(el[0] === 'X')
+            htmlTextX = htmlTextX + '<tr><td>' + el + '</td><td>' + obj[el] + '</td></tr>';
+        if(el[0] === '0')
+            htmlText0 = htmlText0 + '<tr><td>' + el + '</td><td>' + obj[el] + '</td></tr>';
+    }
+    htmlTextX += '</tbody>';
+    htmlText0 += '</tbody>';
+    $('#dependsX').html(htmlTextX);
+    $('#depends0').html(htmlText0);
 }

@@ -153,10 +153,24 @@ var checkRows = function(obj, squareId, symbol) {
     return [];
 }
 
+/**
+ * Get random int value
+ */
 var randomIntInc = function(low, high) {
   return Math.floor(Math.random() * (high - low + 1) + low)
 }
 
+/**
+ * Built string representation of a player e.g. X1 or 03
+ */
+var getPlayerIdRepr = function(id) {
+    var result = '';
+    if (id >= 1 && id <= 3)
+        result = 'X' + id;
+    if (id >= 4 && id <= 6)
+        result = '0' + (id - 3);
+    return result;
+}
 
 /**
  * Main game model.
@@ -230,25 +244,24 @@ var gameModel = {
     },
     changeDependencies: function () // Change dependency matrix on collision
     {
+        logger.debug('changeDependencies()');
         var userIds;
+        var result = {};
         for(var elem in this.players)
         {
             userIds = Array.from(this.players[elem]);
             var randId;
-            //logger.debug(userIds,9);
-            //logger.debug(elem,9);
             for(var el=0; el < this.players[elem].length; el++)
             {
                 randId = Math.floor(Math.random() * userIds.length);
                 randValue = userIds[randId];
                 this.dependencies[this.players[elem][el]] = randValue;
+                result[elem+(el+1)] = getPlayerIdRepr(randValue);
                 userIds.splice(randId, 1);
-                //logger.debug(randId,9);
-                //logger.debug(userIds,9);
             }
         }
-        logger.debug("changeDependencies()");
-        //logger.debug(this.dependencies, 9);
+        logger.debug('changeDependencies()' + JSON.stringify(result));
+        return result;
     },
     endTurn: function() // fires when the turn ends
     // TODO refactor to make it smaller
@@ -303,9 +316,10 @@ var gameModel = {
                 //logger.debug('0 ' + i);
             }
         }
+        result['deps'] = {};
         this.turnCounter += 1;
         if (result.collision.length >= 1){
-            this.changeDependencies();
+            result['deps'] = this.changeDependencies();
         }
 
         result['small'] = this.checkSmall();
