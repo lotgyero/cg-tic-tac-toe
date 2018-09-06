@@ -157,11 +157,16 @@ var updateOnTurnEnds = function(msg) {
 
     // Updating small squares
     for(el of msg['changes']['X']) {
+        if ( msg['collision'].indexOf(el) != -1 )
+            continue
         //logger.debug('updateOnTurnEnds() X:' + el, 5);
         $('#sq'+el).html('<span class="small last">X</span>');
         updPrevTurnSqrs.push(el);
     }
+
     for(el of msg['changes']['0']) {
+        if ( msg['collision'].indexOf(el) != -1 )
+            continue
         //logger.debug('updateOnTurnEnds() 0:' + el, 5);
         $('#sq'+el).html('<span class="small last">0</span>');
         updPrevTurnSqrs.push(el);

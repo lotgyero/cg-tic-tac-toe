@@ -255,6 +255,67 @@ switch (process.argv[2]){
         setTimeout(f3, 5000);
         break;
 
+    case '311': // Collision with a draw. For spectator mode.
+            timeout = 9000;
+            socket.emit('reset');
+            addPlayers(6);
+
+            function f0() {
+                socket.emit('turn', {playerid: 1, squareid: 1});
+                socket.emit('turn', {playerid: 2, squareid: 2});
+                socket.emit('turn', {playerid: 3, squareid: 3});
+                socket.emit('turn', {playerid: 4, squareid: 2});
+                socket.emit('turn', {playerid: 5, squareid: 5});
+                socket.emit('turn', {playerid: 6, squareid: 8});
+                socket.emit('print');
+                console.log('case 311: after 1st turn ');
+            };
+            function f1() {
+                socket.emit('turn', {playerid: 4, squareid: 5});
+                socket.emit('turn', {playerid: 5, squareid: 2});
+                socket.emit('turn', {playerid: 6, squareid: 8});
+                socket.emit('turn', {playerid: 3, squareid: 3});
+                socket.emit('turn', {playerid: 2, squareid: 2});
+                socket.emit('turn', {playerid: 1, squareid: 3});
+                console.log('case 311: after 2nd turn ');
+                socket.emit('print');
+            }
+            function f2() {
+                socket.emit('turn', {playerid: 1, squareid: 1});
+                socket.emit('turn', {playerid: 2, squareid: 1});
+                socket.emit('turn', {playerid: 3, squareid: 2});
+                socket.emit('turn', {playerid: 4, squareid: 8});
+                socket.emit('turn', {playerid: 5, squareid: 8});
+                socket.emit('turn', {playerid: 6, squareid: 9});
+                console.log('case 311: after 3d turn ');
+                socket.emit('print');
+            }
+            function f3() {
+                socket.emit('turn', {playerid: 1, squareid: 1});
+                socket.emit('turn', {playerid: 2, squareid: 3});
+                socket.emit('turn', {playerid: 3, squareid: 7});
+                socket.emit('turn', {playerid: 4, squareid: 5});
+                socket.emit('turn', {playerid: 5, squareid: 5});
+                socket.emit('turn', {playerid: 6, squareid: 6});
+                socket.emit('print');
+                console.log('case 311: after 4th turn ');
+            }
+            function f4() {
+                socket.emit('turn', {playerid: 1, squareid: 2});
+                socket.emit('turn', {playerid: 2, squareid: 2});
+                socket.emit('turn', {playerid: 3, squareid: 4});
+                socket.emit('turn', {playerid: 4, squareid: 2});
+                socket.emit('turn', {playerid: 5, squareid: 2});
+                socket.emit('turn', {playerid: 6, squareid: 7});
+                socket.emit('print');
+                console.log('case 311: after 4th turn ');
+            }
+            setTimeout(f0, 2000);
+            setTimeout(f1, 3000);
+            setTimeout(f2, 4000);
+            setTimeout(f3, 5000);
+            setTimeout(f4, 6000);
+            break;
 
     case '4': // draw conditions test
         socket.emit('reset');
