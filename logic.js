@@ -200,12 +200,11 @@ var gameModel = {
         }
 
         if ( this.turnBuf[playerId] != 0 ) {
-            //logger.debug(data, playerId, squareId);
-            //logger.debug(this.turnBuf);
             logger.info('gameModel.turn(): this turn action has been already taken.');
         } else if ( squareId < 1 || squareId > 81 ) {
             logger.debug('gameModel.turn(): wrong square-id.');
         } else {
+            logger.debug('turn() playerId ' + playerId + ' sqareId ' + squareId);
             this.turnBuf[playerId] = squareId;
             var result = this.endTurn();
             logger.info('gameModel.turn() ' + JSON.stringify(result['changes']));
@@ -232,23 +231,33 @@ var gameModel = {
     {
         var temp = [0];
         var bigSquareId;
-        logger.debug('useDependencies()', 3);
+        logger.debug('useDependencies()');
         for(var i=0; i < this.turnBuf.length; i++) {
             if(this.turnBuf[i] <= 0) {
                 continue;
             }
             bigSquareId = this.turnBuf[this.dependencies[i]];
             temp.push(baseNumber * (bigSquareId - 1) + this.turnBuf[i]);
-            //logger.debug(bigSquareId);
+            //logger.debug('useDependencies() playerid ' + ( i ) + ' bsI ' + bigSquareId);
         }
-        //logger.debug(temp, 3);
         this.turnBuf = temp;
     },
     changeDependencies: function () // Change dependency matrix on collision
     {
+        // Swap 1 with 4, 2 with 5, 3 with 6
         logger.debug('changeDependencies()');
         var userIds;
         var result = {};
+        var tmp = 0;
+        for(var i = 1; i <= 3; i++)
+        {
+            tmp = this.dependencies[i];
+            this.dependencies[i] = this.dependencies[i + 3];
+            this.dependencies[i + 3] = tmp;
+            result[getPlayerIdRepr(i)] = getPlayerIdRepr(this.dependencies[i]);
+            result[getPlayerIdRepr(i + 3)] = getPlayerIdRepr(this.dependencies[i + 3]);
+        }
+        /* random deps between faction members
         for(var elem in this.players)
         {
             userIds = Array.from(this.players[elem]);
@@ -261,7 +270,7 @@ var gameModel = {
                 result[elem+(el+1)] = getPlayerIdRepr(randValue);
                 userIds.splice(randId, 1);
             }
-        }
+        }*/
         logger.debug('changeDependencies()' + JSON.stringify(result));
         return result;
     },

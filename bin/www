@@ -72,12 +72,12 @@ io.on('connection', function (socket) {
     if(typeof data != 'undefined' && gameModel.playerAllowed(data)) {
         var msg = gameModel.turn(data);
         if (typeof msg != 'undefined') {
-          logger.debug(data, 4);
-          logger.debug(msg, 4);
+          logger.debug('www turn(): ' + JSON.stringify(data));
+          logger.debug('www turn(): ' + JSON.stringify(msg));
           io.sockets.emit('turn ends', msg);
         } else {
             io.sockets.emit('player action', { 'playerid': data.playerid });
-            logger.debug('Action was allowed.', 4);
+            logger.debug('Action was allowed.');
         }
       }
   });

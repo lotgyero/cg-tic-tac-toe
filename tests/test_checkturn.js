@@ -90,6 +90,57 @@ switch (process.argv[2]){
         socket.emit('print');
         break;
 
+    case '122': // multiply collisions
+        timeout = 10000;
+        socket.emit('reset');
+        addPlayers(6);
+
+        function f1220() {
+            socket.emit('turn', {playerid: 1, squareid: 1});
+            socket.emit('turn', {playerid: 2, squareid: 2});
+            socket.emit('turn', {playerid: 3, squareid: 3});
+            socket.emit('turn', {playerid: 4, squareid: 1});
+            socket.emit('turn', {playerid: 5, squareid: 2});
+            socket.emit('turn', {playerid: 6, squareid: 5});
+            socket.emit('print');
+            console.log('case 122: after 1st turn ');
+        };
+        function f1221() {
+            socket.emit('turn', {playerid: 1, squareid: 5});
+            socket.emit('turn', {playerid: 2, squareid: 4});
+            socket.emit('turn', {playerid: 3, squareid: 3});
+            socket.emit('turn', {playerid: 4, squareid: 5});
+            socket.emit('turn', {playerid: 5, squareid: 4});
+            socket.emit('turn', {playerid: 6, squareid: 7});
+            console.log('case 122: after 2nd turn ');
+            socket.emit('print');
+        }
+        function f1222() {
+            socket.emit('turn', {playerid: 1, squareid: 7});
+            socket.emit('turn', {playerid: 2, squareid: 8});
+            socket.emit('turn', {playerid: 3, squareid: 9});
+            socket.emit('turn', {playerid: 4, squareid: 7});
+            socket.emit('turn', {playerid: 5, squareid: 8});
+            socket.emit('turn', {playerid: 6, squareid: 1});
+            console.log('case 122: after 3d turn ');
+            socket.emit('print');
+        }
+        function f1223() {
+            socket.emit('turn', {playerid: 1, squareid: 1});
+            socket.emit('turn', {playerid: 2, squareid: 3});
+            socket.emit('turn', {playerid: 3, squareid: 3});
+            socket.emit('turn', {playerid: 4, squareid: 2});
+            socket.emit('turn', {playerid: 5, squareid: 5});
+            socket.emit('turn', {playerid: 6, squareid: 2});
+            socket.emit('print');
+            console.log('case 122: after 4th turn ');
+        }
+        setTimeout(f1220, 2000);
+        setTimeout(f1221, 4000);
+        setTimeout(f1222, 8000);
+        //setTimeout(f1223, 9000);
+        break;
+
     case '3': // 2nd quadrant is taken by X
         socket.emit('reset');
         addPlayers(6);
