@@ -476,6 +476,24 @@ switch (process.argv[2]){
         setTimeout(ch, 25000);
         setTimeout(ch, 45000);
         break;
+    case '91': // 5 live players for interface development
+        timeout = 120000;
+        socket.emit('reset');
+        addPlayers(5);
+        //socket.emit('get player id', { 'faction': '0' });
+        var keepThemAlive = function () {
+            socket.emit('alive', {'playerid': 1});
+            socket.emit('alive', {'playerid': 2});
+            socket.emit('alive', {'playerid': 3});
+            socket.emit('alive', {'playerid': 4});
+            socket.emit('alive', {'playerid': 5});
+        }
+        setTimeout(keepThemAlive, 13000);
+        setTimeout(keepThemAlive, 23000);
+        setTimeout(keepThemAlive, 33000);
+        setTimeout(keepThemAlive, 43000);
+        setTimeout(keepThemAlive, 53000);
+        break;
 
 }
 
