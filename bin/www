@@ -59,9 +59,9 @@ io.on('connection', function (socket) {
         logger.debug(result,4);
         // Delay the game start, since
         // the last player won't process the event properly.
-        setTimeout(function() {
-            io.sockets.emit('game starts', {'begin': true,'size': gameModel.getFieldSize()});
-        }, 1000);
+        setTimeout(function(size) {
+            io.sockets.emit('game starts', {'begin': true, 'size': size});
+        }, 1000, gameModel.getFieldSize());
     }
   });
 
@@ -69,7 +69,8 @@ io.on('connection', function (socket) {
     * Fires when the server receives an action from a player.
     */
   socket.on('turn', function(data) {
-    if(typeof data != 'undefined' && gameModel.playerAllowed(data)) {
+    if(typeof data != 'undefined' && gameModel.playerAllowed(data) &&
+        gameModel.winner === false) {
         var msg = gameModel.turn(data);
         if (typeof msg != 'undefined') {
           logger.debug('www turn(): ' + JSON.stringify(data));

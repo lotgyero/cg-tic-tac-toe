@@ -58,6 +58,47 @@ switch (process.argv[2]){
         socket.emit('turn', {playerid: 6, squareid: 3});
         socket.emit('print');
         break;
+
+    case '22': // kogniton collision
+        socket.emit('reset');
+        addPlayers(6);
+
+        function f22X(n, turn) {
+            //turn = {5, 9 ,9, 7, 5, 9}
+            for(var i = 0; i < turn.length; i ++)
+            {
+                socket.emit('turn', {playerid: i + 1, squareid: turn[i]});
+            }
+            console.log('case 22: after the ' + n + ' turn ');
+            socket.emit('print');
+        };
+        var turns = [
+        [5,3,5,5,2,5],
+        [5,9,9,7,5,9],
+        [8,4,3,7,8,6],
+        [3,5,8,7,8,7],
+        [3,1,9,8,8,5],
+        [7,6,6,8,8,5],
+        [7,5,5,9,9,8],
+        [7,5,5,3,9,2],
+        [7,5,6,4,5,1],
+        [7,7,2,6,2,5],
+        [8,6,3,6,6,8],
+        [8,4,1,1,4,9],
+        [8,5,4,2,6,5],
+        [2,6,1,6,8,5],
+        [8,4,4,1,8,4],
+        [9,1,8,1,8,4],
+        [9,1,2,6,8,4]
+        ]
+
+        timeout = turns.length * 1000 + 2000;
+        for(var i = 0; i < turns.length; i++)
+        {
+            setTimeout(f22X, i * 1000 + 2000, i, turns[i]);
+        }
+        break;
+
     case '12': // small world collision
         socket.emit('reset');
         addPlayers(6);
@@ -219,7 +260,7 @@ switch (process.argv[2]){
         socket.emit('turn', {playerid: 6, squareid: 6});
         socket.emit('print');
         console.log('case 113: after 1st turn ');
-        function f1() {
+        function f1131() {
             socket.emit('turn', {playerid: 6, squareid: 9});
             socket.emit('turn', {playerid: 5, squareid: 8});
             socket.emit('turn', {playerid: 4, squareid: 7});
@@ -229,7 +270,7 @@ switch (process.argv[2]){
             console.log('case 113: after 2nd turn ');
             socket.emit('print');
         }
-        function f2() {
+        function f1132() {
             socket.emit('turn', {playerid: 1, squareid: 2});
             socket.emit('turn', {playerid: 2, squareid: 1});
             socket.emit('turn', {playerid: 3, squareid: 1});
@@ -239,7 +280,7 @@ switch (process.argv[2]){
             console.log('case 113: after 3d turn ');
             socket.emit('print');
         }
-        function f3() {
+        function f1133() {
             socket.emit('turn', {playerid: 1, squareid: 1});
             socket.emit('turn', {playerid: 2, squareid: 3});
             socket.emit('turn', {playerid: 3, squareid: 3});
@@ -249,9 +290,9 @@ switch (process.argv[2]){
             socket.emit('print');
             console.log('case 113: after 4th turn ');
         }
-        setTimeout(f1, 2000);
-        setTimeout(f2, 3000);
-        setTimeout(f3, 4000);
+        setTimeout(f1131, 2000);
+        setTimeout(f1132, 3000);
+        setTimeout(f1133, 4000);
 
         break;
 

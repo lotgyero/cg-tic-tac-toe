@@ -71,7 +71,7 @@ var getBigId = function(line) {
 var printChanges = function(result) {
     logger.debug('printChanges(): result small ' + JSON.stringify(result.small));
     logger.debug('printChanges(): result big ' + JSON.stringify(result.big));
-    logger.debug('printChanges(): result won ' + JSON.stringify(result.won));
+    logger.debug('printChanges(): result winner ' + JSON.stringify(result.winner));
     logger.debug('printChanges(): result changes ' + JSON.stringify(result.changes));
 }
 

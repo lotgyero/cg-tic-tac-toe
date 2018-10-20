@@ -13,7 +13,7 @@ if (prevTurnSqrs.length == 0) {
 
 var logger = {
     debug: function(msg, id) {
-        if (id == 5) console.log(msg);
+        if (id == 334) console.log(msg);
     }
 };
 
@@ -40,8 +40,10 @@ socket.on('game starts', function(msg) {
     $('#gamestate-placeholder').html('Игра началась.');
     // Could delete turn marks at the field of the spectator
     // if turns comes immediately after the game start.
+    logger.debug('game starts size ' + msg['size'],333);
+    logger.debug('game starts ' + JSON.stringify(msg), 333);
     resetGameField(msg['size']);
-    //logger.debug('game starts',5);
+
     turnAllowed = true;
 });
 
@@ -225,6 +227,8 @@ var sendTurn = function(obj, socket)
 
 var changeDependencies = function(obj) {
     logger.debug('changeDependencies()', 4);
+    if ( typeof obj == 'undefined')
+        return;
     if(Object.keys(obj).length == 0)
         return;
     var htmlTextX = '<tbody>';
@@ -245,7 +249,7 @@ var resetGameField = function(size) {
     //logger.debug('resetGameField1 ' + size, 5);
     // This reset works for spectator only.
     if (window.location.href.includes('spectator')) {
-        //logger.debug('resetGameField2 ' + size,5);
+        logger.debug('resetGameField2 ' + size, 333);
         for(var i = 1; i <= size; i++ )
             $('#sq'+i).empty();
     }
