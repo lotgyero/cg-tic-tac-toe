@@ -1,0 +1,15 @@
+version: "3"
+services:
+  dev1:
+    image: jr/nodejs:8.11.1
+    cap_add:
+        - SYS_PTRACE
+    environment:
+        - USER=root
+    volumes:
+      - /home/drrtuy/git:/git:rw
+      - /home/drrtuy/git/cs-docker-tools/shells/:/scripts:ro
+    entrypoint:
+      - /scripts/idle.sh 
+    ports:
+      - 8080:8080
