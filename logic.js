@@ -11,6 +11,20 @@ const baseNumber = 9; // Number of small squares in a big one
 const PLAYER_TO = 4; // User online check timeout PLAYER_TO * 10 secs
 
 /**
+* Create DB connection pool  (Postgres)
+
+$ PGUSER=dbuser \
+  PGHOST=database.server.com \
+  PGPASSWORD=secretpassword \
+  PGDATABASE=mydb \
+  PGPORT=5432 \
+  npm run devstart
+*/
+const { Pool, Client } = require('pg')
+const pool = new Pool();
+
+
+/**
  * Checks whether the small grid square is free or not.
  */
 var actionAllowed = function(obj, squareId) {
@@ -188,8 +202,11 @@ var gameModel = {
     turnBuf : [ 0, 0, 0, 0, 0, 0, 0], // current turn actions
     playerPokeArea : [ 0, 0, 0, 0, 0, 0, 0], // check player online using the structure
     winner: false, // winner flag|info
+    gameId: 0,// Id of this game
+    playersDB : [0,0,0,0,0,0], // Id Players for save to DB
     start: function() {
         this.state = 'in progress';
+        logger.info('gameModel.start');
     },
     turn: function(data) { // Fires when the player sends an action msg
         // Check for values
@@ -206,12 +223,40 @@ var gameModel = {
         } else {
             logger.debug('turn() playerId ' + playerId + ' sqareId ' + squareId);
             this.turnBuf[playerId] = squareId;
+
+            //RRR save turn to DB
+            vals = [this.gameId, this.playersDB[playerId], playerId, squareId];
+            pool.query('INSERT INTO turn(gameid, playerid, playernum, square) VALUES($1, $2, $3, $4)', vals, (err, res) => 
+            {
+                if (err) {
+                    logger.debug('DB error by inserting new turn: ' + err.stack)
+                } 
+            });
+
             var result = this.endTurn();
             logger.info('gameModel.turn() ' + JSON.stringify(result['changes']));
             // TODO could be an empty object, if all players collide with each other
             if (typeof result['changes'] != 'undefined') {
                 logger.debug('gameModel.turn(): the end of the ' + this.turnCounter);
                 printChanges(result);
+
+                //RRR save team_turn to DB
+                vals = [this.gameId, 
+                        result.winner,
+                        JSON.stringify(result.small),
+                        JSON.stringify(result.big),
+                        JSON.stringify(result.changes),
+                        JSON.stringify(result.collision),
+                        JSON.stringify(result.deps),
+                ];
+                pool.query('INSERT INTO team_turn(gameid, winner, small, big, changes, collision, deps) VALUES($1, $2, $3, $4, $5, $6, $7)', vals, (err, res) => 
+                {
+                    if (err) {
+                        logger.debug('DB error by inserting new team_turn: ' + err.stack)
+                    }
+
+                });
+
                 return result;
             }
         }
@@ -242,7 +287,7 @@ var gameModel = {
         }
         this.turnBuf = temp;
     },
-    changeDependencies: function () // Change dependency matrix on collision
+    changeDependencies: function() // Change dependency matrix on collision
     {
         // Swap 1 with 4, 2 with 5, 3 with 6
         logger.debug('changeDependencies()');
@@ -428,7 +473,26 @@ var gameModel = {
     ping: function() { // TODO remove this
         return {state: this.state, turn: this.turnCounter};
     },
-    getPlayerId: function(obj) { // Fires when player connects and begins the game if full set.
+    /*savePlayer2Stor: function(result, gameId, ipaddress) {
+        gamerole = getPlayerIdRepr(result.playerid);
+        logger.debug('savePlayer2Stor  result.playerid='+result.playerid);
+        logger.debug('savePlayer2Stor  this.gameId='+this.gameId);
+        logger.debug('savePlayer2Stor  gamerole='+gamerole);
+        vals = [result.playerid, this.gameId, gamerole, ipaddress,  null ]; // TODO: userid
+            pool.query('INSERT INTO player(playernum, gameid, gamerole, ipaddress, userid) VALUES($1, $2, $3, $4, $5) RETURNING *', vals, (err, res) => 
+            {
+                if (err) {
+                    logger.debug('DB error by inserting new player: ' + err.stack)
+                } else {
+                    logger.debug('after player inserting:');
+                    logger.debug(res.rows[0]);
+                    id = res.rows[0]['id'];
+                    logger.debug(self.playersDB);
+                    self.playersDB[result.playerid] = id;
+                }
+            });
+    }, */
+    getPlayerId: function(obj, ipaddress) { // Fires when player connects and begins the game if full set.
         //logger.debug('getPlayerId():');
         var result = {'playerid': 0};
         if(typeof obj.faction != 'undefined'
@@ -447,6 +511,43 @@ var gameModel = {
             this.start();
             result['begin'] = true;
         }
+        // RRR save game to DB
+        gameId = this.gameId;
+        if(gameId == 0) {
+            vals = [null];
+            pool.query('INSERT INTO game(players) VALUES($1) RETURNING *', vals, (err, res) => 
+            {
+              if (err) {
+                logger.debug('DB error by inserting new game: ' + err.stack)
+              } else {
+                logger.debug('after game inserting: ');
+                logger.debug(res.rows[0]);
+                gameId = res.rows[0]['id'];
+                this.gameId = gameId;
+              }
+            });
+        }
+        // RRR save player to DB
+        var self = this;
+        function savePlayer2Stor() {
+            vals = [result.playerid, gameId, getPlayerIdRepr(result.playerid), ipaddress,  null ];
+            pool.query('INSERT INTO player(playernum, gameid, gamerole, ipaddress, userid) VALUES($1, $2, $3, $4, $5) RETURNING *', vals, (err, res) => 
+            {
+                if (err) {
+                    logger.debug('DB error by inserting new player: ' + err.stack)
+                } else {
+                    logger.debug('after player inserting:');
+                    logger.debug(res.rows[0]);
+                    id = res.rows[0]['id'];
+                    logger.debug(self.playersDB);
+                    self.playersDB[result.playerid] = id;
+                }
+            });
+        };
+        timeout = (gameId==0) ? 3000 : 1;
+        setTimeout(savePlayer2Stor, timeout);
+        //setTimeout(self.savePlayer2Stor, timeout, result, gameId, ipaddress);
+
         return result;
     },
     resetState: function() { // reset the game state on restart and while testing.
@@ -459,6 +560,7 @@ var gameModel = {
         this.turnCounter = 1;
         this.usedSlots = [];
         this.state = 'stopped';
+        this.gameId = 0;
     },
     playerAllowed: function(obj) { // Player id sanity checks
         if ( this.state == 'in progress'
