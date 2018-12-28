@@ -473,25 +473,6 @@ var gameModel = {
     ping: function() { // TODO remove this
         return {state: this.state, turn: this.turnCounter};
     },
-    /*savePlayer2Stor: function(result, gameId, ipaddress) {
-        gamerole = getPlayerIdRepr(result.playerid);
-        logger.debug('savePlayer2Stor  result.playerid='+result.playerid);
-        logger.debug('savePlayer2Stor  this.gameId='+this.gameId);
-        logger.debug('savePlayer2Stor  gamerole='+gamerole);
-        vals = [result.playerid, this.gameId, gamerole, ipaddress,  null ]; // TODO: userid
-            pool.query('INSERT INTO players(playernum, gameid, gamerole, ipaddress, userid) VALUES($1, $2, $3, $4, $5) RETURNING *', vals, (err, res) => 
-            {
-                if (err) {
-                    logger.debug('DB error by inserting new player: ' + err.stack)
-                } else {
-                    logger.debug('after player inserting:');
-                    logger.debug(res.rows[0]);
-                    id = res.rows[0]['id'];
-                    logger.debug(self.playersDB);
-                    self.playersDB[result.playerid] = id;
-                }
-            });
-    }, */
     getPlayerId: function(obj, ipaddress) { // Fires when player connects and begins the game if full set.
         //logger.debug('getPlayerId():');
         var result = {'playerid': 0};
@@ -513,7 +494,7 @@ var gameModel = {
         }
         // RRR save game to DB
         gameId = this.gameId;
-        if(gameId == 0) {
+        if(gameId == 0 && result.playerid == 1) {
             vals = [null];
             pool.query('INSERT INTO games(players) VALUES($1) RETURNING *', vals, (err, res) => 
             {
@@ -544,10 +525,8 @@ var gameModel = {
                 }
             });
         };
-        timeout = (gameId==0) ? 3000 : 1;
+        timeout = 1500; //(gameId==0) ? 3000 : 1;
         setTimeout(savePlayer2Stor, timeout);
-        //setTimeout(self.savePlayer2Stor, timeout, result, gameId, ipaddress);
-
         return result;
     },
     resetState: function() { // reset the game state on restart and while testing.
