@@ -12,15 +12,17 @@ const PLAYER_TO = 4; // User online check timeout PLAYER_TO * 10 secs
 
 /**
 * Create DB connection pool  (Postgres)
+
+$ PGUSER=dbuser \
+  PGHOST=database.server.com \
+  PGPASSWORD=secretpassword \
+  PGDATABASE=mydb \
+  PGPORT=5432 \
+  npm run devstart
 */
 const { Pool, Client } = require('pg')
-const pool = new Pool({
-  user: 'u1',
-  host: '192.168.0.55',
-  database: 'tictac',
-  password: 'u1',
-  port: 5432,
-})
+const pool = new Pool();
+
 
 /**
  * Checks whether the small grid square is free or not.
@@ -224,7 +226,7 @@ var gameModel = {
 
             //RRR save turn to DB
             vals = [this.gameId, this.playersDB[playerId], playerId, squareId];
-            pool.query('INSERT INTO turn(gameid, playerid, player_num, square) VALUES($1, $2, $3, $4)', vals, (err, res) => 
+            pool.query('INSERT INTO turns(gameid, playerid, playernum, square) VALUES($1, $2, $3, $4)', vals, (err, res) => 
             {
                 if (err) {
                     logger.debug('DB error by inserting new turn: ' + err.stack)
@@ -247,7 +249,7 @@ var gameModel = {
                         JSON.stringify(result.collision),
                         JSON.stringify(result.deps),
                 ];
-                pool.query('INSERT INTO team_turn(gameid, winner, small, big, changes, collision, deps) VALUES($1, $2, $3, $4, $5, $6, $7)', vals, (err, res) => 
+                pool.query('INSERT INTO team_turns(gameid, winner, small, big, changes, collision, deps) VALUES($1, $2, $3, $4, $5, $6, $7)', vals, (err, res) => 
                 {
                     if (err) {
                         logger.debug('DB error by inserting new team_turn: ' + err.stack)
@@ -285,7 +287,7 @@ var gameModel = {
         }
         this.turnBuf = temp;
     },
-    changeDependencies: function () // Change dependency matrix on collision
+    changeDependencies: function() // Change dependency matrix on collision
     {
         // Swap 1 with 4, 2 with 5, 3 with 6
         logger.debug('changeDependencies()');
@@ -471,6 +473,25 @@ var gameModel = {
     ping: function() { // TODO remove this
         return {state: this.state, turn: this.turnCounter};
     },
+    /*savePlayer2Stor: function(result, gameId, ipaddress) {
+        gamerole = getPlayerIdRepr(result.playerid);
+        logger.debug('savePlayer2Stor  result.playerid='+result.playerid);
+        logger.debug('savePlayer2Stor  this.gameId='+this.gameId);
+        logger.debug('savePlayer2Stor  gamerole='+gamerole);
+        vals = [result.playerid, this.gameId, gamerole, ipaddress,  null ]; // TODO: userid
+            pool.query('INSERT INTO players(playernum, gameid, gamerole, ipaddress, userid) VALUES($1, $2, $3, $4, $5) RETURNING *', vals, (err, res) => 
+            {
+                if (err) {
+                    logger.debug('DB error by inserting new player: ' + err.stack)
+                } else {
+                    logger.debug('after player inserting:');
+                    logger.debug(res.rows[0]);
+                    id = res.rows[0]['id'];
+                    logger.debug(self.playersDB);
+                    self.playersDB[result.playerid] = id;
+                }
+            });
+    }, */
     getPlayerId: function(obj, ipaddress) { // Fires when player connects and begins the game if full set.
         //logger.debug('getPlayerId():');
         var result = {'playerid': 0};
@@ -490,17 +511,16 @@ var gameModel = {
             this.start();
             result['begin'] = true;
         }
-
         // RRR save game to DB
         gameId = this.gameId;
         if(gameId == 0) {
             vals = [null];
-            pool.query('INSERT INTO game(players) VALUES($1) RETURNING *', vals, (err, res) => 
+            pool.query('INSERT INTO games(players) VALUES($1) RETURNING *', vals, (err, res) => 
             {
               if (err) {
                 logger.debug('DB error by inserting new game: ' + err.stack)
               } else {
-                logger.debug('after game inserting: ');
+                logger.debug('after game insert: ');
                 logger.debug(res.rows[0]);
                 gameId = res.rows[0]['id'];
                 this.gameId = gameId;
@@ -509,23 +529,24 @@ var gameModel = {
         }
         // RRR save player to DB
         var self = this;
-        function save_player() {
-            vals = [result.playerid, gameId, getPlayerIdRepr(result.playerid), ipaddress,  null /* TODO: userid*/];
-            pool.query('INSERT INTO player(player_num, gameid, gamerole, ipaddress, userid) VALUES($1, $2, $3, $4, $5) RETURNING *', vals, (err, res) => 
+        function savePlayer2Stor() {
+            vals = [result.playerid, gameId, getPlayerIdRepr(result.playerid), ipaddress,  null ];
+            pool.query('INSERT INTO players(playernum, gameid, gamerole, ipaddress, userid) VALUES($1, $2, $3, $4, $5) RETURNING *', vals, (err, res) => 
             {
                 if (err) {
                     logger.debug('DB error by inserting new player: ' + err.stack)
                 } else {
-                    logger.debug('after player inserting:');
+                    logger.debug('after player insert:');
                     logger.debug(res.rows[0]);
                     id = res.rows[0]['id'];
                     logger.debug(self.playersDB);
                     self.playersDB[result.playerid] = id;
                 }
             });
-        }
+        };
         timeout = (gameId==0) ? 3000 : 1;
-        setTimeout(save_player, timeout);
+        setTimeout(savePlayer2Stor, timeout);
+        //setTimeout(self.savePlayer2Stor, timeout, result, gameId, ipaddress);
 
         return result;
     },
