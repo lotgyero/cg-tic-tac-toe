@@ -226,7 +226,7 @@ var gameModel = {
 
             //RRR save turn to DB
             vals = [this.gameId, this.playersDB[playerId], playerId, squareId];
-            pool.query('INSERT INTO turn(gameid, playerid, playernum, square) VALUES($1, $2, $3, $4)', vals, (err, res) => 
+            pool.query('INSERT INTO turns(gameid, playerid, playernum, square) VALUES($1, $2, $3, $4)', vals, (err, res) => 
             {
                 if (err) {
                     logger.debug('DB error by inserting new turn: ' + err.stack)
@@ -249,7 +249,7 @@ var gameModel = {
                         JSON.stringify(result.collision),
                         JSON.stringify(result.deps),
                 ];
-                pool.query('INSERT INTO team_turn(gameid, winner, small, big, changes, collision, deps) VALUES($1, $2, $3, $4, $5, $6, $7)', vals, (err, res) => 
+                pool.query('INSERT INTO team_turns(gameid, winner, small, big, changes, collision, deps) VALUES($1, $2, $3, $4, $5, $6, $7)', vals, (err, res) => 
                 {
                     if (err) {
                         logger.debug('DB error by inserting new team_turn: ' + err.stack)
@@ -479,7 +479,7 @@ var gameModel = {
         logger.debug('savePlayer2Stor  this.gameId='+this.gameId);
         logger.debug('savePlayer2Stor  gamerole='+gamerole);
         vals = [result.playerid, this.gameId, gamerole, ipaddress,  null ]; // TODO: userid
-            pool.query('INSERT INTO player(playernum, gameid, gamerole, ipaddress, userid) VALUES($1, $2, $3, $4, $5) RETURNING *', vals, (err, res) => 
+            pool.query('INSERT INTO players(playernum, gameid, gamerole, ipaddress, userid) VALUES($1, $2, $3, $4, $5) RETURNING *', vals, (err, res) => 
             {
                 if (err) {
                     logger.debug('DB error by inserting new player: ' + err.stack)
@@ -515,12 +515,12 @@ var gameModel = {
         gameId = this.gameId;
         if(gameId == 0) {
             vals = [null];
-            pool.query('INSERT INTO game(players) VALUES($1) RETURNING *', vals, (err, res) => 
+            pool.query('INSERT INTO games(players) VALUES($1) RETURNING *', vals, (err, res) => 
             {
               if (err) {
                 logger.debug('DB error by inserting new game: ' + err.stack)
               } else {
-                logger.debug('after game inserting: ');
+                logger.debug('after game insert: ');
                 logger.debug(res.rows[0]);
                 gameId = res.rows[0]['id'];
                 this.gameId = gameId;
@@ -531,12 +531,12 @@ var gameModel = {
         var self = this;
         function savePlayer2Stor() {
             vals = [result.playerid, gameId, getPlayerIdRepr(result.playerid), ipaddress,  null ];
-            pool.query('INSERT INTO player(playernum, gameid, gamerole, ipaddress, userid) VALUES($1, $2, $3, $4, $5) RETURNING *', vals, (err, res) => 
+            pool.query('INSERT INTO players(playernum, gameid, gamerole, ipaddress, userid) VALUES($1, $2, $3, $4, $5) RETURNING *', vals, (err, res) => 
             {
                 if (err) {
                     logger.debug('DB error by inserting new player: ' + err.stack)
                 } else {
-                    logger.debug('after player inserting:');
+                    logger.debug('after player insert:');
                     logger.debug(res.rows[0]);
                     id = res.rows[0]['id'];
                     logger.debug(self.playersDB);
