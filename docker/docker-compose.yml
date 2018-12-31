@@ -1,11 +1,14 @@
 version: "3"
 services:
-  dev1:
+  app:
     image: jr/nodejs:8.11.1
     cap_add:
         - SYS_PTRACE
     environment:
-        - USER=root
+        - PGUSER=overseer
+        - PGHOST=db
+        - PGPASSWORD=overseer
+        - PGDATABASE=tic_tac_toe
     volumes:
       - /home/drrtuy/git:/git:rw
       - /home/drrtuy/git/cs-docker-tools/shells/:/scripts:ro
@@ -13,3 +16,37 @@ services:
       - /scripts/idle.sh 
     ports:
       - 8080:8080
+  dev1:
+    image: jr/nodejs:8.11.1
+    cap_add:
+        - SYS_PTRACE
+    environment:
+        - PGUSER=overseer
+        - PGHOST=db
+        - PGPASSWORD=overseer
+        - PGDATABASE=tic_tac_toe
+    volumes:
+      - /home/drrtuy/git:/git:rw
+      - /home/drrtuy/git/cs-docker-tools/shells/:/scripts:ro
+    entrypoint:
+      - /scripts/idle.sh 
+    ports:
+      - 8081:8080
+  db:
+    image: postgres:11
+    cap_add:
+        - SYS_PTRACE
+    environment:
+        - POSTGRES_USER=postgres
+        #- POSTGRES_PASSWORD=postgres
+        - POSTGRES_DB=postgres
+        - APP_WRITE_USER=overseer
+        - APP_WRITE_PASS=overseer
+        - APP_DATABASE=tic_tac_toe
+    volumes:
+      - /home/drrtuy/git:/git:rw
+      - dbvolume:/var/lib/postgresql/data
+      - /home/drrtuy/git/cg-tic-tac-toe/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d
+volumes:
+  dbvolume:
+
