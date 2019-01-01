@@ -7,13 +7,16 @@ CREATE TYPE gamerole_enum AS ENUM ('X1','X2','X3', '01','02','03');
 CREATE TYPE user_role_enum AS ENUM ('user', 'admin');
 CREATE TYPE winner_enum AS ENUM ('X', '0', 'false');
 
-create table users
+CREATE TABLE IF NOT EXISTS "users"
 (
-	id serial primary key,
-	login varchar(50),
-	secret varchar(50),
-	email varchar(255),
-    role user_role_enum DEFAULT 'user'
+    "id"   SERIAL,
+    "username" VARCHAR(255) NOT NULL UNIQUE,
+    "email" VARCHAR(255) NOT NULL UNIQUE,
+    "secret" VARCHAR(255) NOT NULL,
+    "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL,
+    "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL,
+    "role" user_role_enum DEFAULT 'user',
+    PRIMARY KEY ("id")
 );
 
 create table games
@@ -60,6 +63,6 @@ create table team_turns
 
 --grant all privileges on database tictac to overseer;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO overseer;
-grant select, insert, update on games, players, turns, team_turns to overseer;
+grant select, insert, update on users, games, players, turns, team_turns to overseer;
 
 EOSQL
