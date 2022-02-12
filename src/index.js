@@ -1,20 +1,18 @@
-#!/usr/bin/env node
-
 /**
  * Module dependencies.
  */
 
-var app = require('../app');
-var gameModel = require('../logic');
+var app = require('./app');
+var gameModel = require('./logic');
 var debug = require('debug')('cg-tic-tack-toe:server');
 var http = require('http');
-var logger = require('../logger');
+var logger = require('./logger');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '8080');
+var port = normalizePort(process.env.APP_PORT || '8080');
 app.set('port', port);
 
 /**
